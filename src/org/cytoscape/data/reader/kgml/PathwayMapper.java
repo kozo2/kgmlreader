@@ -189,8 +189,8 @@ public class PathwayMapper {
 								cpdNode, Semantics.INTERACTION, type, true,
 								true);
 						edges.add(edge2);
-						edgeAttr.setAttribute(edge2.getIdentifier(),
-								KEGG_RELATION_TYPE, type);
+//						edgeAttr.setAttribute(edge2.getIdentifier(),
+//								KEGG_RELATION_TYPE, type);
 					}
 				} else {
 					CyNode maplinkNode = nodeMap.get(rel.getEntry2());
@@ -212,8 +212,8 @@ public class PathwayMapper {
 								cpdNode, Semantics.INTERACTION, type, true,
 								true);
 						edges.add(edge2);
-						edgeAttr.setAttribute(edge2.getIdentifier(),
-								KEGG_RELATION_TYPE, type);
+//						edgeAttr.setAttribute(edge2.getIdentifier(),
+//								KEGG_RELATION_TYPE, type);
 					}
 				}
 			}
@@ -243,7 +243,9 @@ public class PathwayMapper {
 								Semantics.INTERACTION, "cc", true);
 						edges.add(edge);
 						edgeAttr.setAttribute(edge.getIdentifier(),
-								KEGG_REACTION_TYPE, rea.getName());
+								KEGG_NAME, rea.getName());
+						edgeAttr.setAttribute(edge.getIdentifier(),
+								KEGG_REACTION_TYPE, rea.getType());
 					}
 				}
 			}
@@ -261,7 +263,9 @@ public class PathwayMapper {
 								Semantics.INTERACTION, "cr", true, true);
 						edges.add(edge);
 						edgeAttr.setAttribute(edge.getIdentifier(),
-								KEGG_REACTION_TYPE, "substrate");
+								KEGG_NAME, rea.getName());
+						edgeAttr.setAttribute(edge.getIdentifier(),
+								KEGG_REACTION_TYPE, rea.getType());
 					}
 					for (Product pro : rea.getProduct()) {
 						CyNode proNode = nodeMap.get(pro.getId());
@@ -269,7 +273,9 @@ public class PathwayMapper {
 								Semantics.INTERACTION, "rc", true, true);
 						edges.add(edge);
 						edgeAttr.setAttribute(edge.getIdentifier(),
-								KEGG_REACTION_TYPE, "product");
+								KEGG_NAME, rea.getName());
+						edgeAttr.setAttribute(edge.getIdentifier(),
+								KEGG_REACTION_TYPE, rea.getType());
 					}
 
 				} else {
@@ -282,13 +288,17 @@ public class PathwayMapper {
 								Semantics.INTERACTION, "cr", true, true);
 						edges.add(subEdge);
 						edgeAttr.setAttribute(subEdge.getIdentifier(),
-								KEGG_REACTION_TYPE, "substrate");
+								KEGG_NAME, rea.getName());
+						edgeAttr.setAttribute(subEdge.getIdentifier(),
+								KEGG_REACTION_TYPE, rea.getType());
 
 						CyEdge proEdge = Cytoscape.getCyEdge(reaNode, subNode,
 								Semantics.INTERACTION, "rc", true, true);
 						edges.add(proEdge);
 						edgeAttr.setAttribute(proEdge.getIdentifier(),
-								KEGG_REACTION_TYPE, "product");
+								KEGG_NAME, rea.getName());
+						edgeAttr.setAttribute(proEdge.getIdentifier(),
+								KEGG_REACTION_TYPE, rea.getType());
 					}
 					for (Product pro : rea.getProduct()) {
 						CyNode proNode = nodeMap.get(pro.getId());
@@ -297,13 +307,17 @@ public class PathwayMapper {
 								Semantics.INTERACTION, "rc", true, true);
 						edges.add(proEdge);
 						edgeAttr.setAttribute(proEdge.getIdentifier(),
-								KEGG_REACTION_TYPE, "product");
+								KEGG_NAME, rea.getName());
+						edgeAttr.setAttribute(proEdge.getIdentifier(),
+								KEGG_REACTION_TYPE, rea.getType());
 
 						CyEdge subEdge = Cytoscape.getCyEdge(proNode, reaNode,
 								Semantics.INTERACTION, "cr", true, true);
 						edges.add(subEdge);
 						edgeAttr.setAttribute(subEdge.getIdentifier(),
-								KEGG_REACTION_TYPE, "substrate");
+								KEGG_NAME, rea.getName());
+						edgeAttr.setAttribute(subEdge.getIdentifier(),
+								KEGG_REACTION_TYPE, rea.getType());
 					}
 				}
 			}
