@@ -22,6 +22,14 @@
 	<property name="build.classes" value="${build.dir}/classes" />
 	<property name="doc.dir" value="doc" />
 
+
+	<property name="test.src.dir" value="test" />
+	<property name="test.build.dir" value="testBuild" />
+	<property name="test.classes" value="${test.build.dir}/classes" />
+
+	<!-- JUnit report directory -->
+	<property name="junit.report.dir" value="./junit-reports" />
+
 	<property name="package.generated" value="org.cytoscape.data.reader.kgml.generated" />
 	<property name="package.generated.dir" value="org/cytoscape/data/reader/kgml/generated" />
 
@@ -36,6 +44,9 @@
 			<include name="**/*.jar" />
 		</fileset>
 		<fileset dir="${lib.dir}">
+			<include name="**/*.jar" />
+		</fileset>
+		<fileset dir="${test.build.dir}">
 			<include name="**/*.jar" />
 		</fileset>
 	</path>
@@ -54,7 +65,7 @@
 		<!-- Clean up generated packages -->
 		<delete dir="${src.dir}/${package.generated.dir}" />
 		<delete dir="${build.classes}/${package.generated.dir}" />
-		
+
 	</target>
 
 	<!-- ======================================================= -->
@@ -63,7 +74,7 @@
 	<target name="bind" depends="clean-generated" description="Run XJC to generate new packages.">
 		<mkdir dir="${src.dir}/${package.generated.dir}" />
 		<mkdir dir="${build.classes}/${package.generated.dir}" />
-		
+
 		<xjc schema="${resources.dir}/KGML_v0.7.1_.dtd" destdir="${src.dir}" package="${package.generated}">
 			<produces dir="${src.dir}" includes="* impl/*" />
 			<arg value="-dtd" />
@@ -82,12 +93,17 @@
 		<mkdir dir="${build.dir}" />
 		<mkdir dir="${build.classes}" />
 		<mkdir dir="${doc.dir}" />
+		<mkdir dir="${test.build.dir}" />
+		<mkdir dir="${test.classes}" />
 	</target>
 
 	<!--  Target to clean out all directories -->
 	<target name="clean" description="Removes all generated files.">
 		<delete dir="${build.dir}" />
 		<delete dir="${doc.dir}" />
+		<delete dir="${test.build.dir}" />
+		<delete dir="${test.classes}" />
+		<delete dir="${junit.report.dir}" />
 	</target>
 
 	<!-- Target to create Cytoscape Jar File  -->
@@ -125,6 +141,51 @@
 		<echo message="${plugin.name}.jar is now complete.  It is located in build/ directory" />
 	</target>
 
-	<target name="all" depends="jar,doc" description="Creates plugin jar and API documentation" />
+	
+	<!-- Run ALL -->
+	<target name="all" depends="test" description="Creates plugin jar and test it" />
+
+	
+	
+	<!-- =================================================================== -->
+	<!-- Compiles the tableImport test and creates jar                       -->
+	<!-- =================================================================== -->
+	<target name="compile-tests" depends="jar">
+		<mkdir dir="${test.build.dir}" />
+		<javac srcdir="${test.src.dir}" includes="**/*" destdir="${test.classes}" deprecation="yes" optimize="yes">
+			<classpath refid="classpath" />
+		</javac>
+
+		<jar destfile="${test.build.dir}/KGMLReaderTests.jar">
+			<fileset dir="${test.classes}" includes="**/*" />
+			<fileset dir="./testData" includes="**/*" />
+		</jar>
+	</target>
+
+	<!-- =================================================================== -->
+	<!-- Runs all test cases.                                    -->
+	<!-- =================================================================== -->
+	<target name="test" depends="compile-tests">
+		<mkdir dir="${junit.report.dir}" />
+		<junit printsummary="yes" haltonfailure="no" maxmemory="512m">
+			<classpath refid="classpath">
+
+			</classpath>
+			<formatter type="plain" usefile="true" />
+			<formatter type="xml" usefile="true" />
+			<batchtest fork="no" todir="${junit.report.dir}" failureProperty="junit.test.failure" errorProperty="junit.test.failure">
+				<fileset dir="${test.src.dir}" includes="**/*Test.java" />
+			</batchtest>
+		</junit>
+
+		<junitreport todir="${junit.report.dir}">
+			<fileset dir="${junit.report.dir}">
+				<include name="TEST-*.xml" />
+			</fileset>
+			<report format="frames" todir="${junit.report.dir}" />
+		</junitreport>
+
+		<fail message="TEST FAILURE! Details: ${junit.report.dir}/index.html" if="junit.test.failure" />
+	</target>
 
 </project>
