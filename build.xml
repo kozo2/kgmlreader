@@ -39,14 +39,12 @@
 	<!-- Classpath with all lib JAR Files and all Cytoscape Core classes -->
 	<path id="classpath">
 		<pathelement path="${build.classes}" />
+		<pathelement path="${test.build.dir}/classes" />
 		<pathelement path="${cyto.dir}/build/classes" />
 		<fileset dir="${cyto.lib.dir}">
 			<include name="**/*.jar" />
 		</fileset>
 		<fileset dir="${lib.dir}">
-			<include name="**/*.jar" />
-		</fileset>
-		<fileset dir="${test.build.dir}">
 			<include name="**/*.jar" />
 		</fileset>
 	</path>
@@ -98,7 +96,7 @@
 	</target>
 
 	<!--  Target to clean out all directories -->
-	<target name="clean" description="Removes all generated files.">
+	<target name="clean" description="Removes all generated files." depends="clean-generated">
 		<delete dir="${build.dir}" />
 		<delete dir="${doc.dir}" />
 		<delete dir="${test.build.dir}" />
