@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!DOCTYPE pathway SYSTEM "http://www.genome.jp/kegg/xml/KGML_v0.7.1_.dtd">
-<!-- Creation date: Mar 15, 2010 15:21:46 +0900 (GMT+09:00) -->
+<!-- Creation date: May 10, 2010 17:59:50 +0900 (GMT+09:00) -->
 <pathway name="path:bsu00010" org="bsu" number="00010"
          title="Glycolysis / Gluconeogenesis"
          image="http://www.genome.jp/kegg/pathway/bsu/bsu00010.png"
@@ -127,7 +127,7 @@
     </entry>
     <entry id="25" name="bsu:BSU37090 bsu:BSU40190" type="gene" reaction="rn:R04780"
         link="http://www.kegg.jp/dbget-bin/www_bget?bsu:BSU37090+bsu:BSU40190">
-        <graphics name="ywjI..." fgcolor="#000000" bgcolor="#BFFFBF"
+        <graphics name="glpX..." fgcolor="#000000" bgcolor="#BFFFBF"
              type="rectangle" x="430" y="338" width="46" height="17"/>
     </entry>
     <entry id="26" name="bsu:BSU22230 bsu:BSU40120" type="gene" reaction="rn:R02738"
@@ -598,20 +598,8 @@
     <relation entry1="32" entry2="6" type="maplink">
         <subtype name="compound" value="56"/>
     </relation>
-    <relation entry1="19" entry2="18" type="maplink">
-        <subtype name="compound" value="58"/>
-    </relation>
-    <relation entry1="17" entry2="18" type="maplink">
-        <subtype name="compound" value="64"/>
-    </relation>
-    <relation entry1="17" entry2="18" type="maplink">
-        <subtype name="compound" value="58"/>
-    </relation>
     <relation entry1="14" entry2="18" type="maplink">
         <subtype name="compound" value="66"/>
-    </relation>
-    <relation entry1="15" entry2="18" type="maplink">
-        <subtype name="compound" value="64"/>
     </relation>
     <relation entry1="19" entry2="79" type="ECrel">
         <subtype name="compound" value="58"/>
@@ -682,19 +670,19 @@
         <product id="67" name="cpd:C00084"/>
     </reaction>
     <reaction id="12" name="rn:R00014" type="irreversible">
-        <substrate id="64" name="cpd:C00022"/>
         <substrate id="75" name="cpd:C00068"/>
+        <substrate id="64" name="cpd:C00022"/>
         <product id="65" name="cpd:C05125"/>
     </reaction>
     <reaction id="13" name="rn:R03270" type="irreversible">
-        <substrate id="65" name="cpd:C05125"/>
         <substrate id="62" name="cpd:C15972"/>
-        <product id="68" name="cpd:C16255"/>
+        <substrate id="65" name="cpd:C05125"/>
         <product id="75" name="cpd:C00068"/>
+        <product id="68" name="cpd:C16255"/>
     </reaction>
     <reaction id="14" name="rn:R02569" type="reversible">
-        <substrate id="69" name="cpd:C15973"/>
         <substrate id="66" name="cpd:C00024"/>
+        <substrate id="69" name="cpd:C15973"/>
         <product id="68" name="cpd:C16255"/>
     </reaction>
     <reaction id="15" name="rn:R00703" type="reversible">
@@ -723,8 +711,8 @@
     </reaction>
     <reaction id="1" name="rn:R01070" type="reversible">
         <substrate id="70" name="cpd:C05378"/>
-        <product id="90" name="cpd:C00118"/>
         <product id="54" name="cpd:C00111"/>
+        <product id="90" name="cpd:C00118"/>
     </reaction>
     <reaction id="24" name="rn:R04779" type="irreversible">
         <substrate id="57" name="cpd:C05345"/>
