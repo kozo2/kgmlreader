@@ -3,7 +3,8 @@ file = File.read("../testData/bsu00010.xml")
 kgml = Bio::KEGG::KGML.new(file)
 
 puts "node number:"
-puts kgml.entries.size
+# map contains TITLE: node so minus 1
+puts kgml.entries.size - 1
 
 map_ids = Array.new
 kgml.entries.each do |entry|

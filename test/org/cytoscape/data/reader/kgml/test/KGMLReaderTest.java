@@ -27,7 +27,7 @@ public class KGMLReaderTest {
 		final int[] nodeArray = reader1.getNodeIndicesArray();
 	
 		assertNotNull(nodeArray);
-		assertEquals(91, nodeArray.length);
+		assertEquals(90, nodeArray.length);
 		
 		final int[] edgeArray = reader1.getEdgeIndicesArray();
 		
