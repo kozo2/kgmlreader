@@ -151,7 +151,8 @@ public class PathwayMapper {
 							geneDataMap.put(node, comp);
 						}
 					}
-					// If the pathway is "global metabolism map", put the entry to entryMap even in "line" graphics.  
+					// If the pathway is "global metabolism map", put the entry
+					// to entryMap even in "line" graphics.
 					if (globalMapPattern.matcher(pathwayID).matches()) {
 						entryMap.put(comp.getId(), comp);
 					}
@@ -190,19 +191,19 @@ public class PathwayMapper {
 						System.out.println(maplinkNode.getIdentifier());
 						System.out.println(cpdNode.getIdentifier() + "\n\n");
 
-//						CyEdge edge1 = Cytoscape.getCyEdge(cpdNode,
-//								maplinkNode, Semantics.INTERACTION, type, true,
-//								true);
-//						edges.add(edge1);
-//						edgeAttr.setAttribute(edge1.getIdentifier(),
-//								KEGG_RELATION, type);
+						// CyEdge edge1 = Cytoscape.getCyEdge(cpdNode,
+						// maplinkNode, Semantics.INTERACTION, type, true,
+						// true);
+						// edges.add(edge1);
+						// edgeAttr.setAttribute(edge1.getIdentifier(),
+						// KEGG_RELATION, type);
 
 						CyEdge edge2 = Cytoscape.getCyEdge(maplinkNode,
 								cpdNode, Semantics.INTERACTION, type, true,
 								true);
 						edges.add(edge2);
-						// edgeAttr.setAttribute(edge2.getIdentifier(),
-						// KEGG_RELATION_TYPE, type);
+						edgeAttr.setAttribute(edge2.getIdentifier(),
+								KEGG_RELATION, type);
 					}
 				} else {
 					CyNode maplinkNode = nodeMap.get(rel.getEntry2());
@@ -213,19 +214,19 @@ public class PathwayMapper {
 						System.out.println(maplinkNode.getIdentifier());
 						System.out.println(cpdNode.getIdentifier() + "\n\n");
 
-//						CyEdge edge1 = Cytoscape.getCyEdge(cpdNode,
-//								maplinkNode, Semantics.INTERACTION, type, true,
-//								true);
-//						edges.add(edge1);
-//						edgeAttr.setAttribute(edge1.getIdentifier(),
-//								KEGG_RELATION, type);
+						// CyEdge edge1 = Cytoscape.getCyEdge(cpdNode,
+						// maplinkNode, Semantics.INTERACTION, type, true,
+						// true);
+						// edges.add(edge1);
+						// edgeAttr.setAttribute(edge1.getIdentifier(),
+						// KEGG_RELATION, type);
 
 						CyEdge edge2 = Cytoscape.getCyEdge(maplinkNode,
 								cpdNode, Semantics.INTERACTION, type, true,
 								true);
 						edges.add(edge2);
-						// edgeAttr.setAttribute(edge2.getIdentifier(),
-						// KEGG_RELATION_TYPE, type);
+						edgeAttr.setAttribute(edge2.getIdentifier(),
+								KEGG_RELATION, type);
 					}
 				}
 			}
@@ -309,24 +310,26 @@ public class PathwayMapper {
 						edgeAttr.setAttribute(subEdge.getIdentifier(),
 								KEGG_REACTION, rea.getType());
 
-//						CyEdge proEdge = Cytoscape.getCyEdge(reaNode, subNode,
-//								Semantics.INTERACTION, "rc", true, true);
-//						edges.add(proEdge);
-//						edgeAttr.setAttribute(proEdge.getIdentifier(),
-//								KEGG_NAME, rea.getName());
-//						edgeAttr.setAttribute(proEdge.getIdentifier(),
-//								KEGG_REACTION, rea.getType());
+						// CyEdge proEdge = Cytoscape.getCyEdge(reaNode,
+						// subNode,
+						// Semantics.INTERACTION, "rc", true, true);
+						// edges.add(proEdge);
+						// edgeAttr.setAttribute(proEdge.getIdentifier(),
+						// KEGG_NAME, rea.getName());
+						// edgeAttr.setAttribute(proEdge.getIdentifier(),
+						// KEGG_REACTION, rea.getType());
 					}
 					for (Product pro : rea.getProduct()) {
 						CyNode proNode = nodeMap.get(pro.getId());
 
-//						CyEdge proEdge = Cytoscape.getCyEdge(reaNode, proNode,
-//								Semantics.INTERACTION, "rc", true, true);
-//						edges.add(proEdge);
-//						edgeAttr.setAttribute(proEdge.getIdentifier(),
-//								KEGG_NAME, rea.getName());
-//						edgeAttr.setAttribute(proEdge.getIdentifier(),
-//								KEGG_REACTION, rea.getType());
+						// CyEdge proEdge = Cytoscape.getCyEdge(reaNode,
+						// proNode,
+						// Semantics.INTERACTION, "rc", true, true);
+						// edges.add(proEdge);
+						// edgeAttr.setAttribute(proEdge.getIdentifier(),
+						// KEGG_NAME, rea.getName());
+						// edgeAttr.setAttribute(proEdge.getIdentifier(),
+						// KEGG_REACTION, rea.getType());
 
 						CyEdge subEdge = Cytoscape.getCyEdge(proNode, reaNode,
 								Semantics.INTERACTION, "cr", true, true);
@@ -402,6 +405,14 @@ public class PathwayMapper {
 				LineStyle.LONG_DASH);
 		eac.setCalculator(edgeLineStyleCalc);
 
+		final DiscreteMapping edgeTgtarrowShape = new DiscreteMapping(
+				ArrowShape.NONE, KEGG_RELATION, ObjectMapping.EDGE_MAPPING);
+		final Calculator edgeTgtarrowShapeCalc = new BasicCalculator(vsName + "-"
+				+ "EdgeSrcarrowStyleMapping", edgeTgtarrowShape,
+				VisualPropertyType.EDGE_TGTARROW_SHAPE);
+		edgeTgtarrowShape.putMapValue(KEGGRelationType.MAPLINK.getTag(), ArrowShape.NONE);
+		eac.setCalculator(edgeTgtarrowShapeCalc);
+		
 		final DiscreteMapping nodeShape = new DiscreteMapping(NodeShape.RECT,
 				KEGG_ENTRY, ObjectMapping.NODE_MAPPING);
 		final Calculator nodeShapeCalc = new BasicCalculator(vsName + "-"
