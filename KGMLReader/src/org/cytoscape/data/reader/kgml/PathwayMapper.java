@@ -56,6 +56,7 @@ public class PathwayMapper {
 	private static final String KEGG_REACTION = "KEGG.reaction";
 	private static final String KEGG_LINK = "KEGG.link";
 	private static final String KEGG_TYPE = "KEGG.type";
+	private static final String KEGG_COLOR = "KEGG.color";
 
 	public PathwayMapper(final Pathway pathway) {
 		this.pathway = pathway;
@@ -82,7 +83,10 @@ public class PathwayMapper {
 	}
 
 	private final Map<String, Entry> entryMap = new HashMap<String, Entry>();
+	private final Map<String, Entry> edgeEntryMap = new HashMap<String, Entry>();
+
 	final Map<String, CyNode> nodeMap = new HashMap<String, CyNode>();
+
 	// final Map<String, CyNode> cpdMap = new HashMap<String, CyNode>();
 	final Map<String, CyNode> id2cpdMap = new HashMap<String, CyNode>();
 	final Map<String, List<Entry>> cpdDataMap = new HashMap<String, List<Entry>>();
@@ -126,6 +130,10 @@ public class PathwayMapper {
 						if (grap != null && grap.getName() != null) {
 							nodeAttr.setAttribute(node.getIdentifier(),
 									KEGG_LABEL, grap.getName());
+							if (globalMapPattern.matcher(pathwayID).matches()) {
+								nodeAttr.setAttribute(node.getIdentifier(),
+										KEGG_COLOR, grap.getBgcolor());
+							}
 						}
 
 						nodeMap.put(comp.getId(), node);
@@ -154,7 +162,9 @@ public class PathwayMapper {
 					// If the pathway is "global metabolism map", put the entry
 					// to entryMap even in "line" graphics.
 					if (globalMapPattern.matcher(pathwayID).matches()) {
-						entryMap.put(comp.getId(), comp);
+						if (grap.getType().equals(KEGGShape.LINE.getTag())) {
+							edgeEntryMap.put(comp.getId(), comp);
+						}
 					}
 				}
 			}
@@ -248,26 +258,29 @@ public class PathwayMapper {
 
 		if (pattern.matcher(pathwayID).matches()) {
 			for (Reaction rea : reactions) {
-				Entry rea_entry = entryMap.get(rea.getId());
-				for (Substrate sub : rea.getSubstrate()) {
-					CyNode subNode = nodeMap.get(sub.getId());
-					for (Product pro : rea.getProduct()) {
-						CyNode proNode = nodeMap.get(pro.getId());
-						CyEdge edge = Cytoscape.getCyEdge(subNode, proNode,
-								Semantics.INTERACTION, "cc", true);
-						edges.add(edge);
-						edgeAttr.setAttribute(edge.getIdentifier(), KEGG_NAME,
-								rea_entry.getName());
-						edgeAttr.setAttribute(edge.getIdentifier(),
-								KEGG_REACTION, rea_entry.getReaction());
-						edgeAttr.setAttribute(edge.getIdentifier(), KEGG_TYPE,
-								rea_entry.getType());
-						edgeAttr.setAttribute(edge.getIdentifier(), KEGG_LINK,
-								rea_entry.getLink());
+				Entry rea_entry = edgeEntryMap.get(rea.getId());
+				for (Graphics grap : rea_entry.getGraphics()) {
+					for (Substrate sub : rea.getSubstrate()) {
+						CyNode subNode = nodeMap.get(sub.getId());
+						for (Product pro : rea.getProduct()) {
+							CyNode proNode = nodeMap.get(pro.getId());
+							CyEdge edge = Cytoscape.getCyEdge(subNode, proNode,
+									Semantics.INTERACTION, "cc", true);
+							edges.add(edge);
+							edgeAttr.setAttribute(edge.getIdentifier(),
+									KEGG_NAME, rea_entry.getName());
+							edgeAttr.setAttribute(edge.getIdentifier(),
+									KEGG_REACTION, rea_entry.getReaction());
+							edgeAttr.setAttribute(edge.getIdentifier(),
+									KEGG_TYPE, rea_entry.getType());
+							edgeAttr.setAttribute(edge.getIdentifier(),
+									KEGG_LINK, rea_entry.getLink());
+							edgeAttr.setAttribute(edge.getIdentifier(),
+									KEGG_COLOR, grap.getFgcolor());
+						}
 					}
 				}
 			}
-
 		} else {
 			for (Reaction rea : reactions) {
 				CyNode reaNode = nodeMap.get(rea.getId());
@@ -352,6 +365,7 @@ public class PathwayMapper {
 		final String vsName = "KEGG: " + pathway.getTitle() + "(" + pathwayName
 				+ ")";
 		final VisualStyle defStyle = new VisualStyle(vsName);
+		final String pathwayID = pathway.getName();
 
 		NodeAppearanceCalculator nac = defStyle.getNodeAppearanceCalculator();
 		EdgeAppearanceCalculator eac = defStyle.getEdgeAppearanceCalculator();
@@ -360,6 +374,7 @@ public class PathwayMapper {
 
 		// Default values
 		final Color nodeColor = Color.WHITE;
+		final Color edgeColor = Color.BLACK;
 		final Color nodeLineColor = new Color(20, 20, 20);
 		final Color nodeLabelColor = new Color(30, 30, 30);
 
@@ -405,13 +420,21 @@ public class PathwayMapper {
 				LineStyle.LONG_DASH);
 		eac.setCalculator(edgeLineStyleCalc);
 
+		Pattern pattern = Pattern.compile(".*01100");
+
 		final DiscreteMapping edgeTgtarrowShape = new DiscreteMapping(
-				ArrowShape.DELTA, Semantics.INTERACTION, ObjectMapping.EDGE_MAPPING);
+				ArrowShape.DELTA, Semantics.INTERACTION,
+				ObjectMapping.EDGE_MAPPING);
 		final Calculator edgeTgtarrowShapeCalc = new BasicCalculator(vsName
 				+ "-" + "EdgeTgtarrowStyleMapping", edgeTgtarrowShape,
 				VisualPropertyType.EDGE_TGTARROW_SHAPE);
+
 		edgeTgtarrowShape.putMapValue("cr", ArrowShape.NONE);
 		edgeTgtarrowShape.putMapValue("maplink", ArrowShape.NONE);
+		if (pattern.matcher(pathwayID).matches()) {
+			edgeTgtarrowShape.putMapValue("cc", ArrowShape.NONE);
+		}
+
 		eac.setCalculator(edgeTgtarrowShapeCalc);
 
 		final DiscreteMapping nodeShape = new DiscreteMapping(NodeShape.RECT,
@@ -425,13 +448,46 @@ public class PathwayMapper {
 				NodeShape.ELLIPSE);
 		nac.setCalculator(nodeShapeCalc);
 
-		final DiscreteMapping nodeColorMap = new DiscreteMapping(nodeColor,
-				KEGG_ENTRY, ObjectMapping.NODE_MAPPING);
-		final Calculator nodeColorCalc = new BasicCalculator(vsName + "-"
-				+ "NodeColorMapping", nodeColorMap,
-				VisualPropertyType.NODE_FILL_COLOR);
-		nodeColorMap.putMapValue(KEGGEntryType.GENE.getTag(), geneNodeColor);
-		nac.setCalculator(nodeColorCalc);
+		final CyNetworkView view = Cytoscape.getNetworkView(network
+				.getIdentifier());
+		final CyAttributes nodeAttr = Cytoscape.getNodeAttributes();
+
+		if (pattern.matcher(pathwayID).matches()) {
+			final DiscreteMapping nodeColorMap = new DiscreteMapping(nodeColor,
+					KEGG_COLOR, ObjectMapping.NODE_MAPPING);
+			final Calculator nodeColorCalc = new BasicCalculator(vsName + "-"
+					+ "NodeColorMapping", nodeColorMap,
+					VisualPropertyType.NODE_FILL_COLOR);
+			
+			final DiscreteMapping edgeColorMap = new DiscreteMapping(edgeColor,
+					KEGG_COLOR, ObjectMapping.EDGE_MAPPING);
+			final Calculator edgeColorCalc = new BasicCalculator(vsName + "-"
+					+ "EdgeColorMapping", edgeColorMap,
+					VisualPropertyType.EDGE_COLOR);
+			
+			for (String key : nodeMap.keySet()) {
+				for (Graphics nodeGraphics : entryMap.get(key).getGraphics()) {
+					if (!nodeGraphics.getBgcolor().equals("none")) {
+						Color c = Color.decode(nodeGraphics.getBgcolor());
+						nodeColorMap.putMapValue(nodeGraphics.getBgcolor(), c);
+						edgeColorMap.putMapValue(nodeGraphics.getBgcolor(), c);
+					}
+				}
+			}
+			
+			nac.setCalculator(nodeColorCalc);
+			nac.setCalculator(edgeColorCalc);
+
+		} else {
+			final DiscreteMapping nodeColorMap = new DiscreteMapping(nodeColor,
+					KEGG_ENTRY, ObjectMapping.NODE_MAPPING);
+			final Calculator nodeColorCalc = new BasicCalculator(vsName + "-"
+					+ "NodeColorMapping", nodeColorMap,
+					VisualPropertyType.NODE_FILL_COLOR);
+			nodeColorMap
+					.putMapValue(KEGGEntryType.GENE.getTag(), geneNodeColor);
+			nac.setCalculator(nodeColorCalc);
+		}
 
 		final DiscreteMapping nodeBorderColorMap = new DiscreteMapping(
 				nodeColor, KEGG_ENTRY, ObjectMapping.NODE_MAPPING);
@@ -453,10 +509,6 @@ public class PathwayMapper {
 
 		nac.setCalculator(nodeHeightCalc);
 		nac.setCalculator(nodeWidthCalc);
-
-		final CyNetworkView view = Cytoscape.getNetworkView(network
-				.getIdentifier());
-		final CyAttributes nodeAttr = Cytoscape.getNodeAttributes();
 
 		nodeWidth.setControllingAttributeName("ID", null, false);
 		nodeHeight.setControllingAttributeName("ID", null, false);
