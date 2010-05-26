@@ -458,13 +458,13 @@ public class PathwayMapper {
 			final Calculator nodeColorCalc = new BasicCalculator(vsName + "-"
 					+ "NodeColorMapping", nodeColorMap,
 					VisualPropertyType.NODE_FILL_COLOR);
-			
+
 			final DiscreteMapping edgeColorMap = new DiscreteMapping(edgeColor,
 					KEGG_COLOR, ObjectMapping.EDGE_MAPPING);
 			final Calculator edgeColorCalc = new BasicCalculator(vsName + "-"
 					+ "EdgeColorMapping", edgeColorMap,
 					VisualPropertyType.EDGE_COLOR);
-			
+
 			for (String key : nodeMap.keySet()) {
 				for (Graphics nodeGraphics : entryMap.get(key).getGraphics()) {
 					if (!nodeGraphics.getBgcolor().equals("none")) {
@@ -474,9 +474,17 @@ public class PathwayMapper {
 					}
 				}
 			}
-			
+
+			final DiscreteMapping edgeWidthMap = new DiscreteMapping(3,
+					Semantics.INTERACTION, ObjectMapping.EDGE_MAPPING);
+			final Calculator edgeWidthCalc = new BasicCalculator(vsName + "-"
+					+ "EdgeWidthMapping", edgeWidthMap,
+					VisualPropertyType.EDGE_LINE_WIDTH);
+			edgeWidthMap.putMapValue("cc", 3);
+
 			nac.setCalculator(nodeColorCalc);
 			nac.setCalculator(edgeColorCalc);
+			nac.setCalculator(edgeWidthCalc);
 
 		} else {
 			final DiscreteMapping nodeColorMap = new DiscreteMapping(nodeColor,
@@ -518,10 +526,23 @@ public class PathwayMapper {
 			for (Graphics nodeGraphics : entryMap.get(key).getGraphics()) {
 				if (KEGGShape.getShape(nodeGraphics.getType()) != -1) {
 					final String nodeID = nodeMap.get(key).getIdentifier();
+					
+					System.out.println(nodeID);
+					System.out.println(key);
+					System.out.println(nodeMap.size());
+					System.out.println(nodeMap.get(key).getIdentifier());
+					System.out.println(nodeMap.get(key).toString());
+					System.out.println(view.toString());
+					
 					final NodeView nv = view.getNodeView(nodeMap.get(key));
+
+					if (nv == null) {
+						System.out.println("nv is null!!!");
+					}
 
 					nv.setXPosition(Double.parseDouble(nodeGraphics.getX()));
 					nv.setYPosition(Double.parseDouble(nodeGraphics.getY()));
+
 					final double w = Double
 							.parseDouble(nodeGraphics.getWidth());
 					nodeAttr.setAttribute(nodeID, "KEGG.nodeWidth", w);
