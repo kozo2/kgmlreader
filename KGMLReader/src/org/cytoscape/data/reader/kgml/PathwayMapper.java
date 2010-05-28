@@ -96,12 +96,12 @@ public class PathwayMapper {
 	private void mapNode() {
 
 		final String pathwayID = pathway.getName();
+		final String pathway_entryID = pathway.getNumber();
 		final List<Entry> components = pathway.getEntry();
 
 		final CyAttributes nodeAttr = Cytoscape.getNodeAttributes();
 
 		Pattern titleNodePattern = Pattern.compile("TITLE:.*");
-		Pattern globalMapPattern = Pattern.compile(".*01100");
 
 		for (final Entry comp : components) {
 			for (Graphics grap : comp.getGraphics()) {
@@ -130,7 +130,7 @@ public class PathwayMapper {
 						if (grap != null && grap.getName() != null) {
 							nodeAttr.setAttribute(node.getIdentifier(),
 									KEGG_LABEL, grap.getName());
-							if (globalMapPattern.matcher(pathwayID).matches()) {
+							if (pathway_entryID.equals("01100")) {
 								nodeAttr.setAttribute(node.getIdentifier(),
 										KEGG_COLOR, grap.getBgcolor());
 							}
@@ -161,7 +161,7 @@ public class PathwayMapper {
 					}
 					// If the pathway is "global metabolism map", put the entry
 					// to entryMap even in "line" graphics.
-					if (globalMapPattern.matcher(pathwayID).matches()) {
+					if (pathway_entryID.equals("01100")) {
 						if (grap.getType().equals(KEGGShape.LINE.getTag())) {
 							edgeEntryMap.put(comp.getId(), comp);
 						}
@@ -249,14 +249,13 @@ public class PathwayMapper {
 	private List<CyEdge> mapReactionEdge() {
 
 		final String pathwayID = pathway.getName();
+		final String pathway_entryID = pathway.getNumber();
 		final List<Reaction> reactions = pathway.getReaction();
 		final List<CyEdge> edges = new ArrayList<CyEdge>();
 
 		CyAttributes edgeAttr = Cytoscape.getEdgeAttributes();
 
-		Pattern pattern = Pattern.compile(".*01100");
-
-		if (pattern.matcher(pathwayID).matches()) {
+		if (pathway_entryID.equals("01100")) {
 			for (Reaction rea : reactions) {
 				Entry rea_entry = edgeEntryMap.get(rea.getId());
 				for (Graphics grap : rea_entry.getGraphics()) {
@@ -366,6 +365,7 @@ public class PathwayMapper {
 				+ ")";
 		final VisualStyle defStyle = new VisualStyle(vsName);
 		final String pathwayID = pathway.getName();
+		final String pathway_entryID = pathway.getNumber();
 
 		NodeAppearanceCalculator nac = defStyle.getNodeAppearanceCalculator();
 		EdgeAppearanceCalculator eac = defStyle.getEdgeAppearanceCalculator();
@@ -420,8 +420,6 @@ public class PathwayMapper {
 				LineStyle.LONG_DASH);
 		eac.setCalculator(edgeLineStyleCalc);
 
-		Pattern pattern = Pattern.compile(".*01100");
-
 		final DiscreteMapping edgeTgtarrowShape = new DiscreteMapping(
 				ArrowShape.DELTA, Semantics.INTERACTION,
 				ObjectMapping.EDGE_MAPPING);
@@ -431,7 +429,7 @@ public class PathwayMapper {
 
 		edgeTgtarrowShape.putMapValue("cr", ArrowShape.NONE);
 		edgeTgtarrowShape.putMapValue("maplink", ArrowShape.NONE);
-		if (pattern.matcher(pathwayID).matches()) {
+		if (pathway_entryID.equals("01100")) {
 			edgeTgtarrowShape.putMapValue("cc", ArrowShape.NONE);
 		}
 
@@ -452,7 +450,7 @@ public class PathwayMapper {
 				.getIdentifier());
 		final CyAttributes nodeAttr = Cytoscape.getNodeAttributes();
 
-		if (pattern.matcher(pathwayID).matches()) {
+		if (pathway_entryID.equals("01100")) {
 			final DiscreteMapping nodeColorMap = new DiscreteMapping(nodeColor,
 					KEGG_COLOR, ObjectMapping.NODE_MAPPING);
 			final Calculator nodeColorCalc = new BasicCalculator(vsName + "-"
