@@ -186,4 +186,21 @@
 		<fail message="TEST FAILURE! Details: ${junit.report.dir}/index.html" if="junit.test.failure" />
 	</target>
 
+        <target name="release" description="Upload 'jar' to Downloads.">
+                <taskdef name="gcupload" classname="net.bluecow.googlecode.ant.GoogleCodeUploadTask">
+                        <classpath refid="classpath" />
+                </taskdef>
+                <property file="build.credentials.properties" />
+                <fail unless="gc.username" message="Missing property 'gc.username' from file 'build.credentials.properties'."/>
+                <fail unless="gc.username" message="Missing property 'gc.username' from file 'build.credentials.properties'."/>
+                <gcupload
+                        username="${gc.username}"
+                        password="${gc.password}"
+                        projectname="${ant.project.name}"
+                        filename="${build.dir}/KGMLReader.jar"
+                        targetfilename="KGMLReader.jar"
+                        summary="Version 0 of KGMLReader"
+                        labels="Featured, Type-Package" />
+        </target>
+
 </project>
