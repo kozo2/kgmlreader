@@ -13,6 +13,7 @@ import org.cytoscape.data.reader.kgml.generated.Pathway;
 
 import cytoscape.CyNetwork;
 import cytoscape.data.readers.AbstractGraphReader;
+import cytoscape.util.CyNetworkNaming;
 import cytoscape.util.URLUtil;
 
 public class KGMLReader extends AbstractGraphReader {
@@ -30,11 +31,10 @@ public class KGMLReader extends AbstractGraphReader {
 
 	public KGMLReader(final String fileName) {
 		super(fileName);
-		System.out.println("File name = " + fileName);
+		System.out.println("Debug: KGML File name = " + fileName);
 		try {
 			this.targetURL = (new File(fileName)).toURI().toURL();
 		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -61,7 +61,6 @@ public class KGMLReader extends AbstractGraphReader {
 
 	@Override
 	public void read() throws IOException {
-		System.out.println("Reading KGML");
 		InputStream is = null;
 		Pathway pathway;
 		
@@ -70,16 +69,14 @@ public class KGMLReader extends AbstractGraphReader {
 					PACKAGE_NAME, this.getClass().getClassLoader());
 			final Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
 
-			
-
 			is = URLUtil.getBasicInputStream(targetURL);
 			pathway = (Pathway) unmarshaller.unmarshal(is);
-			networkName = pathway.getTitle();
+			networkName = CyNetworkNaming.getSuggestedNetworkTitle(pathway.getTitle());
 			
 		} catch (Exception e) {
 			e.printStackTrace();
 
-			throw new IOException("Could not unmarshall KGML");
+			throw new IOException("Could not unmarshall KGML file");
 		} finally {
 			if (is != null) {
 				is.close();

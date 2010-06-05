@@ -7,6 +7,9 @@
 	<!-- The name is used to create the plugin JAR file -->
 	<!-- adding this line to test cvs commit -->
 	<property name="plugin.name" value="KGMLReader" />
+	
+	<!-- Version of plugin -->
+	<property name="version" value="0.01" />
 
 	<!-- The directory containing source code -->
 	<property name="src.dir" value="src" />
@@ -119,7 +122,8 @@
 
 	<!--  Target to compile all Plug In Code -->
 	<target name="compile" depends="prepare, bind" description="Compiles all PlugIn source code.">
-		<javac debug="Yes" srcdir="${src.dir}" destdir="${build.classes}" deprecation="yes" excludes="**/bak/**">
+		<javac debug="Yes" srcdir="${src.dir}" destdir="${build.classes}" deprecation="yes" 
+			excludes="**/bak/**" nowarn="off" source="1.5" target="1.5" optimize="on" includeAntRuntime="false">
 			<classpath refid="classpath" />
 		</javac>
 	</target>
@@ -129,7 +133,7 @@
 		<unzip dest="${build.classes}">
 			<fileset dir="${lib.dir}" includes="*" />
 		</unzip>
-		<copy todir="${build.classes}/csplugins/KGMLReader" file="${resources.dir}/plugin.props" />
+		<copy todir="${build.classes}/org/cytoscape/data/reader/kgml" file="${resources.dir}/plugin.props" />
 		<jar destfile="${build.dir}/${plugin.name}.jar">
 			<manifest>
 				<attribute name="Cytoscape-Plugin" value="org.cytoscape.data.reader.kgml.KGMLReaderPlugin" />
@@ -139,12 +143,12 @@
 		<echo message="${plugin.name}.jar is now complete.  It is located in build/ directory" />
 	</target>
 
-	
+
 	<!-- Run ALL -->
 	<target name="all" depends="test" description="Creates plugin jar and test it" />
 
-	
-	
+
+
 	<!-- =================================================================== -->
 	<!-- Compiles the tableImport test and creates jar                       -->
 	<!-- =================================================================== -->
@@ -186,21 +190,18 @@
 		<fail message="TEST FAILURE! Details: ${junit.report.dir}/index.html" if="junit.test.failure" />
 	</target>
 
-        <target name="release" description="Upload 'jar' to Downloads.">
-                <taskdef name="gcupload" classname="net.bluecow.googlecode.ant.GoogleCodeUploadTask">
-                        <classpath refid="classpath" />
-                </taskdef>
-                <property file="build.credentials.properties" />
-                <fail unless="gc.username" message="Missing property 'gc.username' from file 'build.credentials.properties'."/>
-                <fail unless="gc.username" message="Missing property 'gc.username' from file 'build.credentials.properties'."/>
-                <gcupload
-                        username="${gc.username}"
-                        password="${gc.password}"
-                        projectname="${ant.project.name}"
-                        filename="${build.dir}/KGMLReader.jar"
-                        targetfilename="KGMLReader.jar"
-                        summary="Version 0 of KGMLReader"
-                        labels="Featured, Type-Package" />
-        </target>
+	<target name="release" depends="all" description="Upload 'jar' to Downloads.">
+		<taskdef name="gcupload" classname="net.bluecow.googlecode.ant.GoogleCodeUploadTask">
+			<classpath refid="classpath" />
+		</taskdef>
+		<property file="build.credentials.properties" />
+		<fail unless="gc.username" message="Missing property 'gc.username' from file 'build.credentials.properties'." />
+		<fail unless="gc.username" message="Missing property 'gc.username' from file 'build.credentials.properties'." />
+		<gcupload username="${gc.username}" 
+			password="${gc.password}" projectname="${ant.project.name}" 
+			filename="${build.dir}/KGMLReader.jar" 
+			targetfilename="KGMLReader.jar" 
+			summary="Version ${version} of KGMLReader" labels="Featured, Type-Package" />
+	</target>
 
 </project>

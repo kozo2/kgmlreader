@@ -17,7 +17,6 @@ public class KEGGNetworkListener implements PropertyChangeListener {
 			Cytoscape.getCurrentNetworkView().addNodeContextMenuListener(
 					nodeMenuListener);
 			
-			System.out.println("-----Conetxt added: " + event.getNewValue());
 		}
 
 	}

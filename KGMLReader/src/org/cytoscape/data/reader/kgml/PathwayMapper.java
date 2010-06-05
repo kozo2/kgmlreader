@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.cytoscape.data.reader.kgml.generated.Entry;
@@ -197,8 +196,8 @@ public class PathwayMapper {
 					for (Subtype sub : subs) {
 						CyNode cpdNode = nodeMap.get(sub.getValue());
 
-						System.out.println(maplinkNode.getIdentifier());
-						System.out.println(cpdNode.getIdentifier() + "\n\n");
+						//System.out.println(maplinkNode.getIdentifier());
+						//System.out.println(cpdNode.getIdentifier() + "\n\n");
 
 						CyEdge edge2 = Cytoscape.getCyEdge(maplinkNode,
 								cpdNode, Semantics.INTERACTION, type, true,
@@ -213,8 +212,8 @@ public class PathwayMapper {
 					for (Subtype sub : subs) {
 						CyNode cpdNode = nodeMap.get(sub.getValue());
 
-						System.out.println(maplinkNode.getIdentifier());
-						System.out.println(cpdNode.getIdentifier() + "\n\n");
+						//System.out.println(maplinkNode.getIdentifier());
+						//System.out.println(cpdNode.getIdentifier() + "\n\n");
 
 						CyEdge edge2 = Cytoscape.getCyEdge(maplinkNode,
 								cpdNode, Semantics.INTERACTION, type, true,
@@ -268,8 +267,8 @@ public class PathwayMapper {
 		} else {
 			for (Reaction rea : reactions) {
 				CyNode reaNode = nodeMap.get(rea.getId());
-				System.out.println(rea.getId());
-				System.out.println(reaNode.getIdentifier());
+				//System.out.println(rea.getId());
+				//System.out.println(reaNode.getIdentifier());
 
 				if (rea.getType().equals("irreversible")) {
 					for (Substrate sub : rea.getSubstrate()) {
@@ -295,9 +294,9 @@ public class PathwayMapper {
 
 				} else if (rea.getType().equals("reversible")) {
 					for (Substrate sub : rea.getSubstrate()) {
-						System.out.println(sub.getId());
+						//System.out.println(sub.getId());
 						CyNode subNode = nodeMap.get(sub.getId());
-						System.out.println(subNode.getIdentifier());
+						//System.out.println(subNode.getIdentifier());
 
 						CyEdge proEdge = Cytoscape.getCyEdge(reaNode, subNode,
 								Semantics.INTERACTION, "rc", true, true);
@@ -328,228 +327,219 @@ public class PathwayMapper {
 
 	protected void updateView(final CyNetwork network) {
 
-		final String vsName = "KEGG: " + pathway.getTitle() + "(" + pathwayName
-				+ ")";
+		final String vsName = "KEGG: " + network.getTitle() + " ("
+				+ pathwayName + ")";
 		final CyNetworkView view = Cytoscape.getNetworkView(network
 				.getIdentifier());
 		final CyAttributes nodeAttr = Cytoscape.getNodeAttributes();
 
-		if (!Cytoscape.getVisualMappingManager().getCalculatorCatalog()
+		if (Cytoscape.getVisualMappingManager().getCalculatorCatalog()
 				.getVisualStyleNames().contains(vsName)) {
+			// Visual Style already exists.
+			// Apply it and exit.
 
-			final VisualStyle defStyle = new VisualStyle(vsName);
-			final String pathwayID = pathway.getName();
-			final String pathway_entryID = pathway.getNumber();
+			final VisualStyle targetStyle = Cytoscape.getVisualMappingManager()
+					.getCalculatorCatalog().getVisualStyle(vsName);
+			Cytoscape.getVisualMappingManager().setVisualStyle(targetStyle);
+			view.setVisualStyle(targetStyle.getName());
 
-			NodeAppearanceCalculator nac = defStyle
-					.getNodeAppearanceCalculator();
-			EdgeAppearanceCalculator eac = defStyle
-					.getEdgeAppearanceCalculator();
-			GlobalAppearanceCalculator gac = defStyle
-					.getGlobalAppearanceCalculator();
+			Cytoscape.getVisualMappingManager().setNetworkView(view);
+			view.redrawGraph(false, true);
+			return;
+		}
 
-			// Default values
-			final Color nodeColor = Color.WHITE;
-			final Color edgeColor = Color.BLACK;
-			final Color nodeLineColor = new Color(20, 20, 20);
-			final Color nodeLabelColor = new Color(30, 30, 30);
+		final VisualStyle defStyle = new VisualStyle(vsName);
+		final String pathway_entryID = pathway.getNumber();
 
-			final Color geneNodeColor = new Color(153, 255, 153);
+		NodeAppearanceCalculator nac = defStyle.getNodeAppearanceCalculator();
+		EdgeAppearanceCalculator eac = defStyle.getEdgeAppearanceCalculator();
+		GlobalAppearanceCalculator gac = defStyle
+				.getGlobalAppearanceCalculator();
 
-			final Font nodeLabelFont = new Font("SansSerif", 7, Font.PLAIN);
+		// Default values
+		final Color nodeColor = Color.WHITE;
+		final Color edgeColor = Color.BLACK;
+		final Color nodeLineColor = new Color(20, 20, 20);
+		final Color nodeLabelColor = new Color(30, 30, 30);
 
-			gac.setDefaultBackgroundColor(Color.white);
+		final Color geneNodeColor = new Color(153, 255, 153);
 
-			final PassThroughMapping m = new PassThroughMapping("", KEGG_LABEL);
+		final Font nodeLabelFont = new Font("SansSerif", 7, Font.PLAIN);
 
-			final Calculator nodeLabelMappingCalc = new BasicCalculator(vsName
-					+ "-" + "NodeLabelMapping", m,
-					VisualPropertyType.NODE_LABEL);
+		gac.setDefaultBackgroundColor(Color.white);
 
-			nac.setCalculator(nodeLabelMappingCalc);
+		final PassThroughMapping m = new PassThroughMapping("", KEGG_LABEL);
 
-			nac.setNodeSizeLocked(false);
+		final Calculator nodeLabelMappingCalc = new BasicCalculator(vsName
+				+ "-" + "NodeLabelMapping", m, VisualPropertyType.NODE_LABEL);
 
-			nac.getDefaultAppearance().set(VisualPropertyType.NODE_FILL_COLOR,
-					nodeColor);
-			nac.getDefaultAppearance().set(VisualPropertyType.NODE_SHAPE,
-					NodeShape.ROUND_RECT);
+		nac.setCalculator(nodeLabelMappingCalc);
 
-			nac.getDefaultAppearance().set(
-					VisualPropertyType.NODE_BORDER_COLOR, nodeLineColor);
-			nac.getDefaultAppearance().set(VisualPropertyType.NODE_LINE_WIDTH,
-					1);
+		nac.setNodeSizeLocked(false);
 
-			nac.getDefaultAppearance().set(VisualPropertyType.NODE_LABEL_COLOR,
-					nodeLabelColor);
-			nac.getDefaultAppearance().set(VisualPropertyType.NODE_FONT_FACE,
-					nodeLabelFont);
-			nac.getDefaultAppearance()
-					.set(VisualPropertyType.NODE_FONT_SIZE, 6);
+		nac.getDefaultAppearance().set(VisualPropertyType.NODE_FILL_COLOR,
+				nodeColor);
+		nac.getDefaultAppearance().set(VisualPropertyType.NODE_SHAPE,
+				NodeShape.ROUND_RECT);
 
-			// Default Edge appr
-			eac.getDefaultAppearance().set(
-					VisualPropertyType.EDGE_TGTARROW_SHAPE, ArrowShape.DELTA);
-			final DiscreteMapping edgeLineStyle = new DiscreteMapping(
-					LineStyle.SOLID, KEGG_RELATION, ObjectMapping.EDGE_MAPPING);
-			final Calculator edgeLineStyleCalc = new BasicCalculator(vsName
-					+ "-" + "EdgeLineStyleMapping", edgeLineStyle,
-					VisualPropertyType.EDGE_LINE_STYLE);
-			edgeLineStyle.putMapValue(KEGGRelationType.MAPLINK.getTag(),
-					LineStyle.LONG_DASH);
-			eac.setCalculator(edgeLineStyleCalc);
+		nac.getDefaultAppearance().set(VisualPropertyType.NODE_BORDER_COLOR,
+				nodeLineColor);
+		nac.getDefaultAppearance().set(VisualPropertyType.NODE_LINE_WIDTH, 1);
 
-			final DiscreteMapping edgeTgtarrowShape = new DiscreteMapping(
-					ArrowShape.DELTA, Semantics.INTERACTION,
-					ObjectMapping.EDGE_MAPPING);
-			final Calculator edgeTgtarrowShapeCalc = new BasicCalculator(vsName
-					+ "-" + "EdgeTgtarrowStyleMapping", edgeTgtarrowShape,
-					VisualPropertyType.EDGE_TGTARROW_SHAPE);
+		nac.getDefaultAppearance().set(VisualPropertyType.NODE_LABEL_COLOR,
+				nodeLabelColor);
+		nac.getDefaultAppearance().set(VisualPropertyType.NODE_FONT_FACE,
+				nodeLabelFont);
+		nac.getDefaultAppearance().set(VisualPropertyType.NODE_FONT_SIZE, 6);
 
-			edgeTgtarrowShape.putMapValue("cr", ArrowShape.NONE);
-			edgeTgtarrowShape.putMapValue("maplink", ArrowShape.NONE);
-			if (pathway_entryID.equals("01100")) {
-				edgeTgtarrowShape.putMapValue("cc", ArrowShape.NONE);
-			}
+		// Default Edge appr
+		eac.getDefaultAppearance().set(VisualPropertyType.EDGE_TGTARROW_SHAPE,
+				ArrowShape.DELTA);
+		final DiscreteMapping edgeLineStyle = new DiscreteMapping(
+				LineStyle.SOLID, KEGG_RELATION, ObjectMapping.EDGE_MAPPING);
+		final Calculator edgeLineStyleCalc = new BasicCalculator(vsName + "-"
+				+ "EdgeLineStyleMapping", edgeLineStyle,
+				VisualPropertyType.EDGE_LINE_STYLE);
+		edgeLineStyle.putMapValue(KEGGRelationType.MAPLINK.getTag(),
+				LineStyle.LONG_DASH);
+		eac.setCalculator(edgeLineStyleCalc);
 
-			eac.setCalculator(edgeTgtarrowShapeCalc);
+		final DiscreteMapping edgeTgtarrowShape = new DiscreteMapping(
+				ArrowShape.DELTA, Semantics.INTERACTION,
+				ObjectMapping.EDGE_MAPPING);
+		final Calculator edgeTgtarrowShapeCalc = new BasicCalculator(vsName
+				+ "-" + "EdgeTgtarrowStyleMapping", edgeTgtarrowShape,
+				VisualPropertyType.EDGE_TGTARROW_SHAPE);
 
-			final DiscreteMapping nodeShape = new DiscreteMapping(
-					NodeShape.RECT, KEGG_ENTRY, ObjectMapping.NODE_MAPPING);
-			final Calculator nodeShapeCalc = new BasicCalculator(vsName + "-"
-					+ "NodeShapeMapping", nodeShape,
-					VisualPropertyType.NODE_SHAPE);
-			nodeShape.putMapValue(KEGGEntryType.MAP.getTag(),
-					NodeShape.ROUND_RECT);
-			nodeShape.putMapValue(KEGGEntryType.GENE.getTag(), NodeShape.RECT);
-			nodeShape.putMapValue(KEGGEntryType.ORTHOLOG.getTag(),
-					NodeShape.RECT);
-			nodeShape.putMapValue(KEGGEntryType.COMPOUND.getTag(),
-					NodeShape.ELLIPSE);
-			nac.setCalculator(nodeShapeCalc);
+		edgeTgtarrowShape.putMapValue("cr", ArrowShape.NONE);
+		edgeTgtarrowShape.putMapValue("maplink", ArrowShape.NONE);
+		if (pathway_entryID.equals("01100")) {
+			edgeTgtarrowShape.putMapValue("cc", ArrowShape.NONE);
+		}
 
-			if (pathway_entryID.equals("01100")) {
-				final DiscreteMapping nodeColorMap = new DiscreteMapping(
-						nodeColor, KEGG_COLOR, ObjectMapping.NODE_MAPPING);
-				final Calculator nodeColorCalc = new BasicCalculator(vsName
-						+ "-" + "NodeColorMapping", nodeColorMap,
-						VisualPropertyType.NODE_FILL_COLOR);
+		eac.setCalculator(edgeTgtarrowShapeCalc);
 
-				final DiscreteMapping edgeColorMap = new DiscreteMapping(
-						edgeColor, KEGG_COLOR, ObjectMapping.EDGE_MAPPING);
-				final Calculator edgeColorCalc = new BasicCalculator(vsName
-						+ "-" + "EdgeColorMapping", edgeColorMap,
-						VisualPropertyType.EDGE_COLOR);
+		final DiscreteMapping nodeShape = new DiscreteMapping(NodeShape.RECT,
+				KEGG_ENTRY, ObjectMapping.NODE_MAPPING);
+		final Calculator nodeShapeCalc = new BasicCalculator(vsName + "-"
+				+ "NodeShapeMapping", nodeShape, VisualPropertyType.NODE_SHAPE);
+		nodeShape.putMapValue(KEGGEntryType.MAP.getTag(), NodeShape.ROUND_RECT);
+		nodeShape.putMapValue(KEGGEntryType.GENE.getTag(), NodeShape.RECT);
+		nodeShape.putMapValue(KEGGEntryType.ORTHOLOG.getTag(), NodeShape.RECT);
+		nodeShape.putMapValue(KEGGEntryType.COMPOUND.getTag(),
+				NodeShape.ELLIPSE);
+		nac.setCalculator(nodeShapeCalc);
 
-				for (String key : nodeMap.keySet()) {
-					for (Graphics nodeGraphics : entryMap.get(key)
-							.getGraphics()) {
-						if (!nodeGraphics.getBgcolor().equals("none")) {
-							Color c = Color.decode(nodeGraphics.getBgcolor());
-							nodeColorMap.putMapValue(nodeGraphics.getBgcolor(),
-									c);
-							edgeColorMap.putMapValue(nodeGraphics.getBgcolor(),
-									c);
-						}
-					}
-				}
+		if (pathway_entryID.equals("01100")) {
+			final DiscreteMapping nodeColorMap = new DiscreteMapping(nodeColor,
+					KEGG_COLOR, ObjectMapping.NODE_MAPPING);
+			final Calculator nodeColorCalc = new BasicCalculator(vsName + "-"
+					+ "NodeColorMapping", nodeColorMap,
+					VisualPropertyType.NODE_FILL_COLOR);
 
-				final DiscreteMapping edgeWidthMap = new DiscreteMapping(3,
-						Semantics.INTERACTION, ObjectMapping.EDGE_MAPPING);
-				final Calculator edgeWidthCalc = new BasicCalculator(vsName
-						+ "-" + "EdgeWidthMapping", edgeWidthMap,
-						VisualPropertyType.EDGE_LINE_WIDTH);
-				edgeWidthMap.putMapValue("cc", 3);
-
-				nac.setCalculator(nodeColorCalc);
-				nac.setCalculator(edgeColorCalc);
-				nac.setCalculator(edgeWidthCalc);
-
-			} else {
-				final DiscreteMapping nodeColorMap = new DiscreteMapping(
-						nodeColor, KEGG_ENTRY, ObjectMapping.NODE_MAPPING);
-				final Calculator nodeColorCalc = new BasicCalculator(vsName
-						+ "-" + "NodeColorMapping", nodeColorMap,
-						VisualPropertyType.NODE_FILL_COLOR);
-				nodeColorMap.putMapValue(KEGGEntryType.GENE.getTag(),
-						geneNodeColor);
-				nac.setCalculator(nodeColorCalc);
-			}
-
-			final DiscreteMapping nodeBorderColorMap = new DiscreteMapping(
-					nodeColor, KEGG_ENTRY, ObjectMapping.NODE_MAPPING);
-			final Calculator nodeBorderColorCalc = new BasicCalculator(vsName
-					+ "-" + "NodeBorderColorMapping", nodeBorderColorMap,
-					VisualPropertyType.NODE_BORDER_COLOR);
-			nodeBorderColorMap.putMapValue(KEGGEntryType.MAP.getTag(),
-					Color.BLUE);
-			nac.setCalculator(nodeBorderColorCalc);
-
-			final DiscreteMapping nodeWidth = new DiscreteMapping(30, "ID",
-					ObjectMapping.NODE_MAPPING);
-			final Calculator nodeWidthCalc = new BasicCalculator(vsName + "-"
-					+ "NodeWidthMapping", nodeWidth,
-					VisualPropertyType.NODE_WIDTH);
-			final DiscreteMapping nodeHeight = new DiscreteMapping(30, "ID",
-					ObjectMapping.NODE_MAPPING);
-			final Calculator nodeHeightCalc = new BasicCalculator(vsName + "-"
-					+ "NodeHeightMapping", nodeHeight,
-					VisualPropertyType.NODE_HEIGHT);
-
-			nac.setCalculator(nodeHeightCalc);
-			nac.setCalculator(nodeWidthCalc);
-
-			nodeWidth.setControllingAttributeName("ID", null, false);
-			nodeHeight.setControllingAttributeName("ID", null, false);
+			final DiscreteMapping edgeColorMap = new DiscreteMapping(edgeColor,
+					KEGG_COLOR, ObjectMapping.EDGE_MAPPING);
+			final Calculator edgeColorCalc = new BasicCalculator(vsName + "-"
+					+ "EdgeColorMapping", edgeColorMap,
+					VisualPropertyType.EDGE_COLOR);
 
 			for (String key : nodeMap.keySet()) {
-
 				for (Graphics nodeGraphics : entryMap.get(key).getGraphics()) {
-					if (KEGGShape.getShape(nodeGraphics.getType()) != -1) {
-						final String nodeID = nodeMap.get(key).getIdentifier();
-
-						System.out.println(nodeID);
-						System.out.println(key);
-						System.out.println(nodeMap.size());
-						System.out.println(nodeMap.get(key).getIdentifier());
-						System.out.println(nodeMap.get(key).toString());
-						System.out.println(view.toString());
-
-						final NodeView nv = view.getNodeView(nodeMap.get(key));
-
-						if (nv == null) {
-							System.out.println("nv is null!!!");
-						}
-
-						nv
-								.setXPosition(Double.parseDouble(nodeGraphics
-										.getX()));
-						nv
-								.setYPosition(Double.parseDouble(nodeGraphics
-										.getY()));
-
-						final double w = Double.parseDouble(nodeGraphics
-								.getWidth());
-						nodeAttr.setAttribute(nodeID, "KEGG.nodeWidth", w);
-
-						nodeWidth.putMapValue(nodeID, w);
-
-						final double h = Double.parseDouble(nodeGraphics
-								.getHeight());
-						nodeAttr.setAttribute(nodeID, "KEGG.nodeHeight", h);
-
-						nodeHeight.putMapValue(nodeID, h);
-
-						nv.setShape(KEGGShape.getShape(nodeGraphics.getType()));
+					if (!nodeGraphics.getBgcolor().equals("none")) {
+						Color c = Color.decode(nodeGraphics.getBgcolor());
+						nodeColorMap.putMapValue(nodeGraphics.getBgcolor(), c);
+						edgeColorMap.putMapValue(nodeGraphics.getBgcolor(), c);
 					}
 				}
 			}
 
-			Cytoscape.getVisualMappingManager().getCalculatorCatalog()
-					.addVisualStyle(defStyle);
-			Cytoscape.getVisualMappingManager().setVisualStyle(defStyle);
-			view.setVisualStyle(defStyle.getName());
+			final DiscreteMapping edgeWidthMap = new DiscreteMapping(3,
+					Semantics.INTERACTION, ObjectMapping.EDGE_MAPPING);
+			final Calculator edgeWidthCalc = new BasicCalculator(vsName + "-"
+					+ "EdgeWidthMapping", edgeWidthMap,
+					VisualPropertyType.EDGE_LINE_WIDTH);
+			edgeWidthMap.putMapValue("cc", 3);
+
+			nac.setCalculator(nodeColorCalc);
+			nac.setCalculator(edgeColorCalc);
+			nac.setCalculator(edgeWidthCalc);
+
+		} else {
+			final DiscreteMapping nodeColorMap = new DiscreteMapping(nodeColor,
+					KEGG_ENTRY, ObjectMapping.NODE_MAPPING);
+			final Calculator nodeColorCalc = new BasicCalculator(vsName + "-"
+					+ "NodeColorMapping", nodeColorMap,
+					VisualPropertyType.NODE_FILL_COLOR);
+			nodeColorMap
+					.putMapValue(KEGGEntryType.GENE.getTag(), geneNodeColor);
+			nac.setCalculator(nodeColorCalc);
 		}
+
+		final DiscreteMapping nodeBorderColorMap = new DiscreteMapping(
+				nodeColor, KEGG_ENTRY, ObjectMapping.NODE_MAPPING);
+		final Calculator nodeBorderColorCalc = new BasicCalculator(vsName + "-"
+				+ "NodeBorderColorMapping", nodeBorderColorMap,
+				VisualPropertyType.NODE_BORDER_COLOR);
+		nodeBorderColorMap.putMapValue(KEGGEntryType.MAP.getTag(), Color.BLUE);
+		nac.setCalculator(nodeBorderColorCalc);
+
+		final DiscreteMapping nodeWidth = new DiscreteMapping(30, "ID",
+				ObjectMapping.NODE_MAPPING);
+		final Calculator nodeWidthCalc = new BasicCalculator(vsName + "-"
+				+ "NodeWidthMapping", nodeWidth, VisualPropertyType.NODE_WIDTH);
+		final DiscreteMapping nodeHeight = new DiscreteMapping(30, "ID",
+				ObjectMapping.NODE_MAPPING);
+		final Calculator nodeHeightCalc = new BasicCalculator(vsName + "-"
+				+ "NodeHeightMapping", nodeHeight,
+				VisualPropertyType.NODE_HEIGHT);
+
+		nac.setCalculator(nodeHeightCalc);
+		nac.setCalculator(nodeWidthCalc);
+
+		nodeWidth.setControllingAttributeName("ID", null, false);
+		nodeHeight.setControllingAttributeName("ID", null, false);
+
+		for (String key : nodeMap.keySet()) {
+
+			for (Graphics nodeGraphics : entryMap.get(key).getGraphics()) {
+				if (KEGGShape.getShape(nodeGraphics.getType()) != -1) {
+					final String nodeID = nodeMap.get(key).getIdentifier();
+
+//					System.out.println(nodeID);
+//					System.out.println(key);
+//					System.out.println(nodeMap.size());
+//					System.out.println(nodeMap.get(key).getIdentifier());
+//					System.out.println(nodeMap.get(key).toString());
+//					System.out.println(view.toString());
+
+					final NodeView nv = view.getNodeView(nodeMap.get(key));
+					if(nv == null)
+						continue;
+
+					nv.setXPosition(Double.parseDouble(nodeGraphics.getX()));
+					nv.setYPosition(Double.parseDouble(nodeGraphics.getY()));
+
+					final double w = Double
+							.parseDouble(nodeGraphics.getWidth());
+					nodeAttr.setAttribute(nodeID, "KEGG.nodeWidth", w);
+
+					nodeWidth.putMapValue(nodeID, w);
+
+					final double h = Double.parseDouble(nodeGraphics
+							.getHeight());
+					nodeAttr.setAttribute(nodeID, "KEGG.nodeHeight", h);
+
+					nodeHeight.putMapValue(nodeID, h);
+
+					nv.setShape(KEGGShape.getShape(nodeGraphics.getType()));
+				}
+			}
+		}
+
+		Cytoscape.getVisualMappingManager().getCalculatorCatalog()
+				.addVisualStyle(defStyle);
+		Cytoscape.getVisualMappingManager().setVisualStyle(defStyle);
+		view.setVisualStyle(defStyle.getName());
 
 		Cytoscape.getVisualMappingManager().setNetworkView(view);
 		view.redrawGraph(false, true);

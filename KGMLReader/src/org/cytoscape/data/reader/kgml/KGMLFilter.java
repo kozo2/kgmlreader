@@ -62,7 +62,6 @@ public class KGMLFilter extends CyFileFilter {
 				final String header = getHeader(file);
 
 				if (header.indexOf(KEGG_DTD) > 0) {
-					System.out.println("======== This is KGML file.");
 					return true;
 				}
 			} catch (IOException e) {
