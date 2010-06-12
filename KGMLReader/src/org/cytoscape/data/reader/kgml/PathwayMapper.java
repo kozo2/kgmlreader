@@ -461,8 +461,8 @@ public class PathwayMapper {
 			edgeWidthMap.putMapValue("cc", 3);
 
 			nac.setCalculator(nodeColorCalc);
-			nac.setCalculator(edgeColorCalc);
-			nac.setCalculator(edgeWidthCalc);
+			eac.setCalculator(edgeColorCalc);
+			eac.setCalculator(edgeWidthCalc);
 
 		} else {
 			final DiscreteMapping nodeColorMap = new DiscreteMapping(nodeColor,
