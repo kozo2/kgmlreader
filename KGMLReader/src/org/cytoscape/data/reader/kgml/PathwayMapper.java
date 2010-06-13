@@ -53,6 +53,7 @@ public class PathwayMapper {
 	private static final String KEGG_LABEL = "KEGG.label";
 	private static final String KEGG_RELATION = "KEGG.relation";
 	private static final String KEGG_REACTION = "KEGG.reaction";
+	private static final String KEGG_REACTION_LIST = "KEGG.reaction.list";
 	private static final String KEGG_LINK = "KEGG.link";
 	private static final String KEGG_TYPE = "KEGG.type";
 	private static final String KEGG_COLOR = "KEGG.color";
@@ -121,7 +122,10 @@ public class PathwayMapper {
 						if (reaction != null) {
 							entry2reaction.put(node, reaction);
 							nodeAttr.setAttribute(node.getIdentifier(),
-									"KEGG.reaction", reaction);
+									KEGG_REACTION, reaction);
+							nodeAttr.setListAttribute(node.getIdentifier(),
+									KEGG_REACTION_LIST, java.util.Arrays
+											.asList(reaction.split(" ")));
 						}
 
 						// final Graphics graphics = comp.getGraphics();
@@ -196,8 +200,8 @@ public class PathwayMapper {
 					for (Subtype sub : subs) {
 						CyNode cpdNode = nodeMap.get(sub.getValue());
 
-						//System.out.println(maplinkNode.getIdentifier());
-						//System.out.println(cpdNode.getIdentifier() + "\n\n");
+						// System.out.println(maplinkNode.getIdentifier());
+						// System.out.println(cpdNode.getIdentifier() + "\n\n");
 
 						CyEdge edge2 = Cytoscape.getCyEdge(maplinkNode,
 								cpdNode, Semantics.INTERACTION, type, true,
@@ -212,8 +216,8 @@ public class PathwayMapper {
 					for (Subtype sub : subs) {
 						CyNode cpdNode = nodeMap.get(sub.getValue());
 
-						//System.out.println(maplinkNode.getIdentifier());
-						//System.out.println(cpdNode.getIdentifier() + "\n\n");
+						// System.out.println(maplinkNode.getIdentifier());
+						// System.out.println(cpdNode.getIdentifier() + "\n\n");
 
 						CyEdge edge2 = Cytoscape.getCyEdge(maplinkNode,
 								cpdNode, Semantics.INTERACTION, type, true,
@@ -267,8 +271,8 @@ public class PathwayMapper {
 		} else {
 			for (Reaction rea : reactions) {
 				CyNode reaNode = nodeMap.get(rea.getId());
-				//System.out.println(rea.getId());
-				//System.out.println(reaNode.getIdentifier());
+				// System.out.println(rea.getId());
+				// System.out.println(reaNode.getIdentifier());
 
 				if (rea.getType().equals("irreversible")) {
 					for (Substrate sub : rea.getSubstrate()) {
@@ -294,9 +298,9 @@ public class PathwayMapper {
 
 				} else if (rea.getType().equals("reversible")) {
 					for (Substrate sub : rea.getSubstrate()) {
-						//System.out.println(sub.getId());
+						// System.out.println(sub.getId());
 						CyNode subNode = nodeMap.get(sub.getId());
-						//System.out.println(subNode.getIdentifier());
+						// System.out.println(subNode.getIdentifier());
 
 						CyEdge proEdge = Cytoscape.getCyEdge(reaNode, subNode,
 								Semantics.INTERACTION, "rc", true, true);
@@ -505,15 +509,15 @@ public class PathwayMapper {
 				if (KEGGShape.getShape(nodeGraphics.getType()) != -1) {
 					final String nodeID = nodeMap.get(key).getIdentifier();
 
-//					System.out.println(nodeID);
-//					System.out.println(key);
-//					System.out.println(nodeMap.size());
-//					System.out.println(nodeMap.get(key).getIdentifier());
-//					System.out.println(nodeMap.get(key).toString());
-//					System.out.println(view.toString());
+					// System.out.println(nodeID);
+					// System.out.println(key);
+					// System.out.println(nodeMap.size());
+					// System.out.println(nodeMap.get(key).getIdentifier());
+					// System.out.println(nodeMap.get(key).toString());
+					// System.out.println(view.toString());
 
 					final NodeView nv = view.getNodeView(nodeMap.get(key));
-					if(nv == null)
+					if (nv == null)
 						continue;
 
 					nv.setXPosition(Double.parseDouble(nodeGraphics.getX()));
