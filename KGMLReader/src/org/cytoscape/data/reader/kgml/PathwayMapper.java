@@ -49,6 +49,7 @@ public class PathwayMapper {
 	private int[] edgeIdx;
 
 	private static final String KEGG_NAME = "KEGG.name";
+	private static final String KEGG_NAME_LIST = "KEGG.name.list";
 	private static final String KEGG_ENTRY = "KEGG.entry";
 	private static final String KEGG_LABEL = "KEGG.label";
 	private static final String KEGG_RELATION = "KEGG.relation";
@@ -110,6 +111,9 @@ public class PathwayMapper {
 								+ comp.getId(), true);
 						nodeAttr.setAttribute(node.getIdentifier(), KEGG_NAME,
 								comp.getName());
+						nodeAttr.setListAttribute(node.getIdentifier(),
+								KEGG_NAME_LIST, java.util.Arrays.asList(comp
+										.getName().split(" ")));
 						if (comp.getLink() != null)
 							nodeAttr.setAttribute(node.getIdentifier(),
 									KEGG_LINK, comp.getLink());
