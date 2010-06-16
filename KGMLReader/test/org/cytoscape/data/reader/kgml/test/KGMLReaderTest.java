@@ -32,9 +32,7 @@ public class KGMLReaderTest {
 		final int[] edgeArray = reader1.getEdgeIndicesArray();
 		
 		assertNotNull(edgeArray);
-//		expected:<115> but was:<139>
-//		assertEquals(115, edgeArray.length);
-		
+
 	}
 
 }
