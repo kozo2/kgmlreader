@@ -104,76 +104,83 @@ public class PathwayMapper {
 		Pattern titleNodePattern = Pattern.compile("TITLE:.*");
 
 		for (final Entry comp : components) {
-			for (Graphics grap : comp.getGraphics()) {
-				if (!titleNodePattern.matcher(grap.getName()).matches()) {
-					if (!grap.getType().equals(KEGGShape.LINE.getTag())) {
-						CyNode node = Cytoscape.getCyNode(pathwayID + "-"
-								+ comp.getId(), true);
-						nodeAttr.setAttribute(node.getIdentifier(), KEGG_NAME,
-								comp.getName());
-						nodeAttr.setListAttribute(node.getIdentifier(),
-								KEGG_NAME_LIST, java.util.Arrays.asList(comp
-										.getName().split(" ")));
-						if (comp.getLink() != null)
-							nodeAttr.setAttribute(node.getIdentifier(),
-									KEGG_LINK, comp.getLink());
-						nodeAttr.setAttribute(node.getIdentifier(), KEGG_ENTRY,
-								comp.getType());
 
-						final String reaction = comp.getReaction();
+			if (!comp.getType().equals("group")) {
 
-						// Save reaction
-						if (reaction != null) {
-							entry2reaction.put(node, reaction);
+				for (Graphics grap : comp.getGraphics()) {
+					if (!titleNodePattern.matcher(grap.getName()).matches()) {
+						if (!grap.getType().equals(KEGGShape.LINE.getTag())) {
+							CyNode node = Cytoscape.getCyNode(pathwayID + "-"
+									+ comp.getId(), true);
 							nodeAttr.setAttribute(node.getIdentifier(),
-									KEGG_REACTION, reaction);
+									KEGG_NAME, comp.getName());
 							nodeAttr.setListAttribute(node.getIdentifier(),
-									KEGG_REACTION_LIST, java.util.Arrays
-											.asList(reaction.split(" ")));
-						}
-
-						// final Graphics graphics = comp.getGraphics();
-						if (grap != null && grap.getName() != null) {
-							nodeAttr.setAttribute(node.getIdentifier(),
-									KEGG_LABEL, grap.getName());
-							if (pathway_entryID.equals("01100")) {
+									KEGG_NAME_LIST, java.util.Arrays
+											.asList(comp.getName().split(" ")));
+							if (comp.getLink() != null)
 								nodeAttr.setAttribute(node.getIdentifier(),
-										KEGG_COLOR, grap.getBgcolor());
+										KEGG_LINK, comp.getLink());
+							nodeAttr.setAttribute(node.getIdentifier(),
+									KEGG_ENTRY, comp.getType());
+
+							final String reaction = comp.getReaction();
+
+							// Save reaction
+							if (reaction != null) {
+								entry2reaction.put(node, reaction);
+								nodeAttr.setAttribute(node.getIdentifier(),
+										KEGG_REACTION, reaction);
+								nodeAttr.setListAttribute(node.getIdentifier(),
+										KEGG_REACTION_LIST, java.util.Arrays
+												.asList(reaction.split(" ")));
+							}
+
+							// final Graphics graphics = comp.getGraphics();
+							if (grap != null && grap.getName() != null) {
+								nodeAttr.setAttribute(node.getIdentifier(),
+										KEGG_LABEL, grap.getName());
+								if (pathway_entryID.equals("01100")) {
+									nodeAttr.setAttribute(node.getIdentifier(),
+											KEGG_COLOR, grap.getBgcolor());
+								}
+							}
+
+							nodeMap.put(comp.getId(), node);
+							entryMap.put(comp.getId(), comp);
+
+							if (comp.getType().equals(
+									KEGGEntryType.COMPOUND.getTag())) {
+								id2cpdMap.put(comp.getId(), node);
+								List<Entry> current = cpdDataMap.get(comp
+										.getName());
+
+								if (current != null) {
+									current.add(comp);
+								} else {
+									current = new ArrayList<Entry>();
+									current.add(comp);
+								}
+								cpdDataMap.put(comp.getName(), current);
+							} else if (comp.getType().equals(
+									KEGGEntryType.GENE.getTag())
+									|| comp.getType().equals(
+											KEGGEntryType.ORTHOLOG.getTag())) {
+								geneDataMap.put(node, comp);
 							}
 						}
-
-						nodeMap.put(comp.getId(), node);
-						entryMap.put(comp.getId(), comp);
-
-						if (comp.getType().equals(
-								KEGGEntryType.COMPOUND.getTag())) {
-							id2cpdMap.put(comp.getId(), node);
-							List<Entry> current = cpdDataMap
-									.get(comp.getName());
-
-							if (current != null) {
-								current.add(comp);
-							} else {
-								current = new ArrayList<Entry>();
-								current.add(comp);
+						// If the pathway is "global metabolism map", put the
+						// entry
+						// to entryMap even in "line" graphics.
+						if (pathway_entryID.equals("01100")) {
+							if (grap.getType().equals(KEGGShape.LINE.getTag())) {
+								edgeEntryMap.put(comp.getId(), comp);
 							}
-							cpdDataMap.put(comp.getName(), current);
-						} else if (comp.getType().equals(
-								KEGGEntryType.GENE.getTag())
-								|| comp.getType().equals(
-										KEGGEntryType.ORTHOLOG.getTag())) {
-							geneDataMap.put(node, comp);
-						}
-					}
-					// If the pathway is "global metabolism map", put the entry
-					// to entryMap even in "line" graphics.
-					if (pathway_entryID.equals("01100")) {
-						if (grap.getType().equals(KEGGShape.LINE.getTag())) {
-							edgeEntryMap.put(comp.getId(), comp);
 						}
 					}
 				}
+
 			}
+
 		}
 
 		nodeIdx = new int[nodeMap.values().size()];
@@ -197,40 +204,49 @@ public class PathwayMapper {
 
 			if (rel.getType().equals(KEGGRelationType.MAPLINK.getTag())) {
 				final List<Subtype> subs = rel.getSubtype();
-				if (entryMap.get(rel.getEntry1()).getType().equals(
-						KEGGEntryType.MAP.getTag())) {
-					CyNode maplinkNode = nodeMap.get(rel.getEntry1());
 
-					for (Subtype sub : subs) {
-						CyNode cpdNode = nodeMap.get(sub.getValue());
+				if (entryMap.containsKey(rel.getEntry1())
+						&& entryMap.containsKey(rel.getEntry2())) {
 
-						// System.out.println(maplinkNode.getIdentifier());
-						// System.out.println(cpdNode.getIdentifier() + "\n\n");
+					if (entryMap.get(rel.getEntry1()).getType().equals(
+							KEGGEntryType.MAP.getTag())) {
+						CyNode maplinkNode = nodeMap.get(rel.getEntry1());
 
-						CyEdge edge2 = Cytoscape.getCyEdge(maplinkNode,
-								cpdNode, Semantics.INTERACTION, type, true,
-								true);
-						edges.add(edge2);
-						edgeAttr.setAttribute(edge2.getIdentifier(),
-								KEGG_RELATION, type);
+						for (Subtype sub : subs) {
+							CyNode cpdNode = nodeMap.get(sub.getValue());
+
+							// System.out.println(maplinkNode.getIdentifier());
+							// System.out.println(cpdNode.getIdentifier() +
+							// "\n\n");
+
+							CyEdge edge2 = Cytoscape.getCyEdge(maplinkNode,
+									cpdNode, Semantics.INTERACTION, type, true,
+									true);
+							edges.add(edge2);
+							edgeAttr.setAttribute(edge2.getIdentifier(),
+									KEGG_RELATION, type);
+						}
+					} else {
+						CyNode maplinkNode = nodeMap.get(rel.getEntry2());
+
+						for (Subtype sub : subs) {
+							CyNode cpdNode = nodeMap.get(sub.getValue());
+
+							// System.out.println(maplinkNode.getIdentifier());
+							// System.out.println(cpdNode.getIdentifier() +
+							// "\n\n");
+
+							CyEdge edge2 = Cytoscape.getCyEdge(maplinkNode,
+									cpdNode, Semantics.INTERACTION, type, true,
+									true);
+							edges.add(edge2);
+							edgeAttr.setAttribute(edge2.getIdentifier(),
+									KEGG_RELATION, type);
+						}
 					}
-				} else {
-					CyNode maplinkNode = nodeMap.get(rel.getEntry2());
 
-					for (Subtype sub : subs) {
-						CyNode cpdNode = nodeMap.get(sub.getValue());
-
-						// System.out.println(maplinkNode.getIdentifier());
-						// System.out.println(cpdNode.getIdentifier() + "\n\n");
-
-						CyEdge edge2 = Cytoscape.getCyEdge(maplinkNode,
-								cpdNode, Semantics.INTERACTION, type, true,
-								true);
-						edges.add(edge2);
-						edgeAttr.setAttribute(edge2.getIdentifier(),
-								KEGG_RELATION, type);
-					}
 				}
+
 			}
 		}
 
