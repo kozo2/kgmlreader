@@ -6,7 +6,12 @@ import cytoscape.Cytoscape;
 import cytoscape.data.ImportHandler;
 import cytoscape.plugin.CytoscapePlugin;
 
-
+/**
+ * KGML Reader Main class
+ * 
+ * @author kono
+ *
+ */
 public class KGMLReaderPlugin extends CytoscapePlugin {
 	
 	public KGMLReaderPlugin() {
