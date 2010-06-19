@@ -62,6 +62,9 @@ public class PathwayMapper {
 	private static final String METABOLIC_PATHWAYS_ENTRY_ID = "01100";
 	private static final String BIOSYNTHESIS_OF_SECONDARY_METABOLITES_ENTRY_ID = "01110";
 
+	private static final String REACTION_TYPE_REVERSIBLE = "reversible";
+	private static final String REACTION_TYPE_IRREVERSIBLE = "irreversible";
+
 	public PathwayMapper(final Pathway pathway) {
 		this.pathway = pathway;
 		this.pathwayName = pathway.getName();
@@ -142,7 +145,10 @@ public class PathwayMapper {
 							if (grap != null && grap.getName() != null) {
 								nodeAttr.setAttribute(node.getIdentifier(),
 										KEGG_LABEL, grap.getName());
-								if (pathway_entryID.equals("01100")) {
+								if (pathway_entryID
+										.equals(METABOLIC_PATHWAYS_ENTRY_ID)
+										|| pathway_entryID
+												.equals(BIOSYNTHESIS_OF_SECONDARY_METABOLITES_ENTRY_ID)) {
 									nodeAttr.setAttribute(node.getIdentifier(),
 											KEGG_COLOR, grap.getBgcolor());
 								}
@@ -301,7 +307,7 @@ public class PathwayMapper {
 				// System.out.println(rea.getId());
 				// System.out.println(reaNode.getIdentifier());
 
-				if (rea.getType().equals("irreversible")) {
+				if (rea.getType().equals(REACTION_TYPE_IRREVERSIBLE)) {
 					for (Substrate sub : rea.getSubstrate()) {
 						CyNode subNode = nodeMap.get(sub.getId());
 						CyEdge edge = Cytoscape.getCyEdge(subNode, reaNode,
@@ -323,7 +329,7 @@ public class PathwayMapper {
 								KEGG_REACTION, rea.getType());
 					}
 
-				} else if (rea.getType().equals("reversible")) {
+				} else if (rea.getType().equals(REACTION_TYPE_REVERSIBLE)) {
 					for (Substrate sub : rea.getSubstrate()) {
 						// System.out.println(sub.getId());
 						CyNode subNode = nodeMap.get(sub.getId());
@@ -444,7 +450,9 @@ public class PathwayMapper {
 
 		edgeTgtarrowShape.putMapValue("cr", ArrowShape.NONE);
 		edgeTgtarrowShape.putMapValue("maplink", ArrowShape.NONE);
-		if (pathway_entryID.equals("01100")) {
+		if (pathway_entryID.equals(METABOLIC_PATHWAYS_ENTRY_ID)
+				|| pathway_entryID
+						.equals(BIOSYNTHESIS_OF_SECONDARY_METABOLITES_ENTRY_ID)) {
 			edgeTgtarrowShape.putMapValue("cc", ArrowShape.NONE);
 		}
 
