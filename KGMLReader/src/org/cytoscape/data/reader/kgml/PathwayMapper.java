@@ -58,7 +58,7 @@ public class PathwayMapper {
 	private static final String KEGG_LINK = "KEGG.link";
 	private static final String KEGG_TYPE = "KEGG.type";
 	private static final String KEGG_COLOR = "KEGG.color";
-	
+
 	private static final String METABOLIC_PATHWAYS_ENTRY_ID = "01100";
 	private static final String BIOSYNTHESIS_OF_SECONDARY_METABOLITES_ENTRY_ID = "01110";
 
@@ -174,7 +174,9 @@ public class PathwayMapper {
 						// If the pathway is "global metabolism map", put the
 						// entry
 						// to entryMap even in "line" graphics.
-						if (pathway_entryID.equals(METABOLIC_PATHWAYS_ENTRY_ID) || pathway_entryID.equals(BIOSYNTHESIS_OF_SECONDARY_METABOLITES_ENTRY_ID)) {
+						if (pathway_entryID.equals(METABOLIC_PATHWAYS_ENTRY_ID)
+								|| pathway_entryID
+										.equals(BIOSYNTHESIS_OF_SECONDARY_METABOLITES_ENTRY_ID)) {
 							if (grap.getType().equals(KEGGShape.LINE.getTag())) {
 								edgeEntryMap.put(comp.getId(), comp);
 							}
@@ -266,7 +268,9 @@ public class PathwayMapper {
 
 		CyAttributes edgeAttr = Cytoscape.getEdgeAttributes();
 
-		if (pathway_entryID.equals(METABOLIC_PATHWAYS_ENTRY_ID) || pathway_entryID.equals(BIOSYNTHESIS_OF_SECONDARY_METABOLITES_ENTRY_ID)) {
+		if (pathway_entryID.equals(METABOLIC_PATHWAYS_ENTRY_ID)
+				|| pathway_entryID
+						.equals(BIOSYNTHESIS_OF_SECONDARY_METABOLITES_ENTRY_ID)) {
 			for (Reaction rea : reactions) {
 				Entry rea_entry = edgeEntryMap.get(rea.getId());
 				for (Graphics grap : rea_entry.getGraphics()) {
@@ -457,7 +461,9 @@ public class PathwayMapper {
 				NodeShape.ELLIPSE);
 		nac.setCalculator(nodeShapeCalc);
 
-		if (pathway_entryID.equals(METABOLIC_PATHWAYS_ENTRY_ID) || pathway_entryID.equals(BIOSYNTHESIS_OF_SECONDARY_METABOLITES_ENTRY_ID)) {
+		if (pathway_entryID.equals(METABOLIC_PATHWAYS_ENTRY_ID)
+				|| pathway_entryID
+						.equals(BIOSYNTHESIS_OF_SECONDARY_METABOLITES_ENTRY_ID)) {
 			final DiscreteMapping nodeColorMap = new DiscreteMapping(nodeColor,
 					KEGG_COLOR, ObjectMapping.NODE_MAPPING);
 			final Calculator nodeColorCalc = new BasicCalculator(vsName + "-"
