@@ -5,6 +5,7 @@ import org.cytoscape.kegg.browser.KEGGNetworkListener;
 import cytoscape.Cytoscape;
 import cytoscape.data.ImportHandler;
 import cytoscape.plugin.CytoscapePlugin;
+import cytoscape.view.CytoscapeDesktop;
 
 /**
  * KGML Reader Main class
@@ -15,11 +16,12 @@ import cytoscape.plugin.CytoscapePlugin;
 public class KGMLReaderPlugin extends CytoscapePlugin {
 	
 	public KGMLReaderPlugin() {
-		ImportHandler importHandler = new ImportHandler();
+		final ImportHandler importHandler = new ImportHandler();
 		importHandler.addFilter(new KGMLFilter());
 		
+		// Add context menu listeners.
 		Cytoscape.getSwingPropertyChangeSupport().addPropertyChangeListener(
-				new KEGGNetworkListener());
+				CytoscapeDesktop.NETWORK_VIEW_CREATED, new KEGGNetworkListener());
 	}
 
 }

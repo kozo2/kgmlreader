@@ -14,15 +14,27 @@ import org.cytoscape.data.reader.kgml.KEGGEntryType;
 
 import cytoscape.Cytoscape;
 import cytoscape.data.CyAttributes;
+import cytoscape.view.CyNetworkView;
 
 import ding.view.NodeContextMenuListener;
 
+/**
+ * Add context menu for KEGG pathways
+ * 
+ * @author kono
+ *
+ */
 public class KEGGNodeContextMenuListener implements NodeContextMenuListener {
 	private static final String COMPOUND_URL = "http://www.kegg.jp/Fig/compound/";
 	private static final String REACTION_URL = "http://www.kegg.jp/Fig/reaction_small/";
 	private static final String MAP_URL = "http://www.genome.jp/tmp/pathway_thumbnail/";
 	
 	private CyAttributes nodeAttr = Cytoscape.getNodeAttributes();
+	private final CyNetworkView view;
+
+	public KEGGNodeContextMenuListener(CyNetworkView view) {
+		this.view = view;
+	}
 
 	@Override
 	public void addNodeContextMenuItems(NodeView nv, JPopupMenu menu) {
@@ -57,7 +69,6 @@ public class KEGGNodeContextMenuListener implements NodeContextMenuListener {
 			try {
 				image = new URL(MAP_URL + mapID + ".png");
 			} catch (MalformedURLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			item.setIcon(new ImageIcon(image));
@@ -73,7 +84,6 @@ public class KEGGNodeContextMenuListener implements NodeContextMenuListener {
 				e.printStackTrace();
 			}
 		}
-	
 		
 		menu.addSeparator();
 		menu.add(keggMenu);

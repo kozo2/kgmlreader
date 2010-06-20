@@ -48,7 +48,7 @@ public class PathwayMapper {
 	private int[] nodeIdx;
 	private int[] edgeIdx;
 
-	private static final String KEGG_NAME = "KEGG.name";
+	static final String KEGG_NAME = "KEGG.name";
 	private static final String KEGG_NAME_LIST = "KEGG.name.list";
 	private static final String KEGG_ENTRY = "KEGG.entry";
 	private static final String KEGG_LABEL = "KEGG.label";
@@ -59,6 +59,7 @@ public class PathwayMapper {
 	private static final String KEGG_TYPE = "KEGG.type";
 	private static final String KEGG_COLOR = "KEGG.color";
 
+	// Special cases: Global Map
 	private static final String METABOLIC_PATHWAYS_ENTRY_ID = "01100";
 	private static final String BIOSYNTHESIS_OF_SECONDARY_METABOLITES_ENTRY_ID = "01110";
 
@@ -89,6 +90,7 @@ public class PathwayMapper {
 		}
 	}
 
+
 	private final Map<String, Entry> entryMap = new HashMap<String, Entry>();
 	private final Map<String, Entry> edgeEntryMap = new HashMap<String, Entry>();
 
@@ -98,7 +100,8 @@ public class PathwayMapper {
 	final Map<String, List<Entry>> cpdDataMap = new HashMap<String, List<Entry>>();
 	final Map<CyNode, Entry> geneDataMap = new HashMap<CyNode, Entry>();
 	private final Map<CyNode, String> entry2reaction = new HashMap<CyNode, String>();
-
+	
+	
 	private void mapNode() {
 
 		final String pathwayID = pathway.getName();

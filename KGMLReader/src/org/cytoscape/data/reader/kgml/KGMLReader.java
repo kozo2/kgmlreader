@@ -10,8 +10,11 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 
 import org.cytoscape.data.reader.kgml.generated.Pathway;
+import org.cytoscape.kegg.webservice.KEGGRest;
 
 import cytoscape.CyNetwork;
+import cytoscape.Cytoscape;
+import cytoscape.data.CyAttributes;
 import cytoscape.data.readers.AbstractGraphReader;
 import cytoscape.util.CyNetworkNaming;
 import cytoscape.util.URLUtil;
@@ -19,6 +22,14 @@ import cytoscape.util.URLUtil;
 public class KGMLReader extends AbstractGraphReader {
 
 	private static final String PACKAGE_NAME = "org.cytoscape.data.reader.kgml.generated";
+	
+	static final String NETWORK_TYPE = "network type";
+	static final String NETWORK_TYPE_VALUE = "KEGG Pathway";
+	static final String SPECIES = "KEGG.org";
+	static final String NUMBER= "KEGG.number";
+	static final String IMAGE = "KEGG.image";
+	static final String LINK = "KEGG.link";
+	static final String TITLE = "KEGG.title";
 
 	private URL targetURL;
 	
@@ -28,6 +39,8 @@ public class KGMLReader extends AbstractGraphReader {
 	private String networkName;
 	
 	private PathwayMapper mapper;
+	
+	private Pathway pathway;
 
 	public KGMLReader(final String fileName) {
 		super(fileName);
@@ -42,6 +55,9 @@ public class KGMLReader extends AbstractGraphReader {
 	@Override
 	public void doPostProcessing(CyNetwork network) {
 		mapper.updateView(network);
+		
+		// Set network Attr
+		this.mapNetwork(network);
 	}
 
 	@Override
@@ -62,7 +78,7 @@ public class KGMLReader extends AbstractGraphReader {
 	@Override
 	public void read() throws IOException {
 		InputStream is = null;
-		Pathway pathway;
+		pathway = null;
 		
 		try {
 			final JAXBContext jaxbContext = JAXBContext.newInstance(
@@ -88,6 +104,27 @@ public class KGMLReader extends AbstractGraphReader {
 		nodeIdx = mapper.getNodeIdx();
 		edgeIdx = mapper.getEdgeIdx();
 
+	}
+	
+	/**
+	 *  Store general pathway information as network attribute
+	 */
+	private void mapNetwork(final CyNetwork network) {
+		final CyAttributes netAttr = Cytoscape.getNetworkAttributes();
+		netAttr.setAttribute(network.getIdentifier(), PathwayMapper.KEGG_NAME, pathway.getName());
+		netAttr.setAttribute(network.getIdentifier(), SPECIES, pathway.getOrg());
+		netAttr.setAttribute(network.getIdentifier(), NUMBER, pathway.getNumber());
+		netAttr.setAttribute(network.getIdentifier(), IMAGE, pathway.getImage());
+		netAttr.setAttribute(network.getIdentifier(), LINK, pathway.getLink());
+		netAttr.setAttribute(network.getIdentifier(), TITLE, pathway.getTitle());
+		netAttr.setAttribute(network.getIdentifier(), NETWORK_TYPE, NETWORK_TYPE_VALUE);
+		
+		try {
+			KEGGRest.getCleint().getResponse(pathway.getOrg() + pathway.getNumber(), network);
+		} catch (IOException e) {
+			
+			e.printStackTrace();
+		}
 	}
 
 }
