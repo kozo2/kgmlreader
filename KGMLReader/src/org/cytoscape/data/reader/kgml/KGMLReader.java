@@ -10,7 +10,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 
 import org.cytoscape.data.reader.kgml.generated.Pathway;
-import org.cytoscape.kegg.webservice.KEGGRest;
+import org.cytoscape.kegg.webservice.KEGGRestClient;
 
 import cytoscape.CyNetwork;
 import cytoscape.Cytoscape;
@@ -120,7 +120,7 @@ public class KGMLReader extends AbstractGraphReader {
 		netAttr.setAttribute(network.getIdentifier(), NETWORK_TYPE, NETWORK_TYPE_VALUE);
 		
 		try {
-			KEGGRest.getCleint().getResponse(pathway.getOrg() + pathway.getNumber(), network);
+			KEGGRestClient.getCleint().importAnnotation(pathway.getOrg() + pathway.getNumber(), network);
 		} catch (IOException e) {
 			
 			e.printStackTrace();
