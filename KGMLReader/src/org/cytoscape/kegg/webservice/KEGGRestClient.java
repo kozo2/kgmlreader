@@ -59,6 +59,8 @@ public class KEGGRestClient {
 		final String result = getEntries(DatabaseType.PATHWAY, pathwayID);
 		if (result != null) {
 			parser.parse(result, network);
+			// Test only
+			parser.parse2(result);
 		}
 	}
 
