@@ -42,33 +42,28 @@ public class KEGGRestClient {
 		return client;
 	}
 
-	
 	private final HttpClient httpclient;
 	private final KEGGResponseParser parser;
 
 	private KEGGRestClient() {
 		this.httpclient = new DefaultHttpClient();
 		this.parser = new KEGGResponseParser();
-		
+
 	}
 
-	
 	public void importAnnotation(final String pathwayID, CyNetwork network)
 			throws IOException {
-		
+
 		final String result = getEntries(DatabaseType.PATHWAY, pathwayID);
-		if (result != null) {
-			parser.parse(result, network);
-			// Test only
-			parser.parse2(result);
-		}
+		if (result != null)
+			parser.parsePathway(result, network);
 	}
 
-	
-	private String getEntries(final DatabaseType type, final String id) throws IOException {
+	private String getEntries(final DatabaseType type, final String id)
+			throws IOException {
 		final HttpGet httpget = new HttpGet(KEGG_BASE_URL + type.getType()
 				+ "/" + id);
-		
+
 		final HttpResponse response = httpclient.execute(httpget);
 		final HttpEntity entity = response.getEntity();
 
