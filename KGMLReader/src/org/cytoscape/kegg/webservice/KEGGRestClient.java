@@ -35,6 +35,20 @@ public class KEGGRestClient {
 		}
 	}
 
+	private enum FieldType {
+		MODULE_JSON("modules.json");
+
+		private final String type;
+
+		private FieldType(final String type) {
+			this.type = type;
+		}
+
+		public String getType() {
+			return type;
+		}
+	}
+
 	// This client is a singleton.
 	private static KEGGRestClient client = new KEGGRestClient();
 
@@ -51,12 +65,19 @@ public class KEGGRestClient {
 
 	}
 
-	public void importAnnotation(final String pathwayID, CyNetwork network)
+	public String importAnnotation(final String pathwayID, CyNetwork network)
 			throws IOException {
 
 		final String result = getEntries(DatabaseType.PATHWAY, pathwayID);
-		if (result != null)
-			parser.parsePathway(result, network);
+		final String entryField = getEntryField(DatabaseType.PATHWAY, pathwayID, FieldType.MODULE_JSON);
+		return entryField;
+
+//		if (result != null)
+//			parser.parsePathway(result, network);
+		
+//		if (entryField != null) {
+//			parser.mapJsonKeys(entryField, network);
+//		}
 	}
 
 	private String getEntries(final DatabaseType type, final String id)
@@ -69,6 +90,20 @@ public class KEGGRestClient {
 
 		if (entity != null)
 			return EntityUtils.toString(entity);
+		else
+			return null;
+	}
+
+	private String getEntryField(final DatabaseType dbType, final String id, final FieldType fieldType)
+			throws IOException {
+		final HttpGet httpget = new HttpGet(KEGG_BASE_URL + dbType.getType() + "/" + id + "/" + fieldType);
+		
+		final HttpResponse response = httpclient.execute(httpget);
+		final HttpEntity entity = response.getEntity();
+		
+		if (entity != null) {
+			return EntityUtils.toString(entity);
+		}
 		else
 			return null;
 	}

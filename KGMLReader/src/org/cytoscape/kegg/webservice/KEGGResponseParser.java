@@ -11,6 +11,8 @@ import cytoscape.CyNetwork;
 import cytoscape.Cytoscape;
 import cytoscape.data.CyAttributes;
 
+import net.arnx.jsonic.JSON;
+
 public class KEGGResponseParser {
 
 	private static final String EOF = "///";
@@ -32,6 +34,11 @@ public class KEGGResponseParser {
 
 		// Import Modules as Network attribute
 		mapModule(entryMap.get("MODULE"), network);
+	}
+	
+	public void mapJsonKeys(final String response, CyNetwork network) {
+		final List<String> moduleIDs = new ArrayList<String>(JSON.decode(response, HashMap.class).keySet());
+		attr.setListAttribute(network.getIdentifier(), "KEGG.moduleID", moduleIDs);
 	}
 
 	private void mapModule(List<String> modules, CyNetwork network) {
