@@ -15,7 +15,7 @@ import cytoscape.CyNetwork;
 import cytoscape.Cytoscape;
 import cytoscape.data.CyAttributes;
 
-import net.arnx.jsonic.JSON;
+//import net.arnx.jsonic.JSON;
 
 public class KEGGClientTest {
 
@@ -32,18 +32,19 @@ public class KEGGClientTest {
 		CyNetwork net = Cytoscape.createNetwork("kegg dummy1");
 		CyAttributes attr = Cytoscape.getNetworkAttributes();
 		
-//		KEGGRestClient.getCleint().importAnnotation("hsa00020", net);
+		KEGGRestClient.getCleint().importAnnotation("hsa00020", net);
 	
 //		String fullName = attr.getStringAttribute(net.getIdentifier(), "KEGG.fullName");
 //		assertNotNull(fullName);
 //		assertEquals("Citrate cycle (TCA cycle) - Homo sapiens (human)", fullName);
 		
-//		List moduleIDs = attr.getListAttribute(net.getIdentifier(), "KEGG.moduleID");
-//		assertNotNull(moduleIDs);
-//		assertEquals(6, moduleIDs.size());
+		List<String> moduleIDs = attr.getListAttribute(net.getIdentifier(), "KEGG.moduleID");
+		assertNotNull(moduleIDs);
+		assertEquals(6, moduleIDs.size());
 
-		String json = KEGGRestClient.getCleint().importAnnotation("hsa00020", net);
-		assertNotNull(JSON.decode(json, HashMap.class).keySet());
+//		String modules = KEGGRestClient.getCleint().importAnnotation("hsa00020", net);
+//		assertNotNull(modules.split("\t"));
+//		assertEquals(6, modules.split("\t").length);
 		
 //		List moduleIDs = attr.getListAttribute(net.getIdentifier(), "KEGG.moduleID");
 //		assertNotNull(moduleIDs);

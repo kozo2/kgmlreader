@@ -36,7 +36,7 @@ public class KEGGRestClient {
 	}
 
 	private enum FieldType {
-		MODULE_JSON("modules.json");
+		MODULE("modules"), MODULE_JSON("modules.json");
 
 		private final String type;
 
@@ -65,15 +65,15 @@ public class KEGGRestClient {
 
 	}
 
-	public String importAnnotation(final String pathwayID, CyNetwork network)
+	public void importAnnotation(final String pathwayID, CyNetwork network)
 			throws IOException {
 
 		final String result = getEntries(DatabaseType.PATHWAY, pathwayID);
-		final String entryField = getEntryField(DatabaseType.PATHWAY, pathwayID, FieldType.MODULE_JSON);
-		return entryField;
+		final String entryField = getEntryField(DatabaseType.PATHWAY, pathwayID, FieldType.MODULE);
+//		return entryField;
 
-//		if (result != null)
-//			parser.parsePathway(result, network);
+		if (entryField != null)
+			parser.mapModule(entryField, network);
 		
 //		if (entryField != null) {
 //			parser.mapJsonKeys(entryField, network);
@@ -96,7 +96,7 @@ public class KEGGRestClient {
 
 	private String getEntryField(final DatabaseType dbType, final String id, final FieldType fieldType)
 			throws IOException {
-		final HttpGet httpget = new HttpGet(KEGG_BASE_URL + dbType.getType() + "/" + id + "/" + fieldType);
+		final HttpGet httpget = new HttpGet(KEGG_BASE_URL + dbType.getType() + "/" + id + "/" + fieldType.getType());
 		
 		final HttpResponse response = httpclient.execute(httpget);
 		final HttpEntity entity = response.getEntity();
