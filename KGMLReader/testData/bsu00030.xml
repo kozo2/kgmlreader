@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!DOCTYPE pathway SYSTEM "http://www.genome.jp/kegg/xml/KGML_v0.7.1_.dtd">
-<!-- Creation date: Oct 7, 2009 14:31:05 +0900 (JST) -->
+<!-- Creation date: Jun 18, 2010 10:10:47 +0900 (GMT+09:00) -->
 <pathway name="path:bsu00030" org="bsu" number="00030"
          title="Pentose phosphate pathway"
          image="http://www.genome.jp/kegg/pathway/bsu/bsu00030.png"
@@ -107,7 +107,7 @@
     </entry>
     <entry id="21" name="bsu:BSU37090 bsu:BSU40190" type="gene" reaction="rn:R04780"
         link="http://www.kegg.jp/dbget-bin/www_bget?bsu:BSU37090+bsu:BSU40190">
-        <graphics name="ywjI..." fgcolor="#000000" bgcolor="#BFFFBF"
+        <graphics name="glpX..." fgcolor="#000000" bgcolor="#BFFFBF"
              type="rectangle" x="150" y="435" width="46" height="17"/>
     </entry>
     <entry id="22" name="bsu:BSU31350" type="gene" reaction="rn:R02740"
@@ -653,10 +653,10 @@
         <product id="56" name="cpd:C00117"/>
     </reaction>
     <reaction id="15" name="rn:R01641" type="reversible">
-        <substrate id="63" name="cpd:C05382"/>
         <substrate id="66" name="cpd:C00118"/>
-        <product id="56" name="cpd:C00117"/>
+        <substrate id="63" name="cpd:C05382"/>
         <product id="83" name="cpd:C00231"/>
+        <product id="56" name="cpd:C00117"/>
     </reaction>
     <reaction id="16" name="rn:R01056" type="reversible">
         <substrate id="56" name="cpd:C00117"/>
@@ -669,8 +669,8 @@
     <reaction id="18" name="rn:R01830" type="reversible">
         <substrate id="66" name="cpd:C00118"/>
         <substrate id="71" name="cpd:C05345"/>
-        <product id="61" name="cpd:C00279"/>
         <product id="83" name="cpd:C00231"/>
+        <product id="61" name="cpd:C00279"/>
     </reaction>
     <reaction id="19" name="rn:R01070" type="reversible">
         <substrate id="67" name="cpd:C05378"/>
@@ -713,8 +713,8 @@
         <product id="49" name="cpd:C00198"/>
     </reaction>
     <reaction id="46" name="rn:R01827" type="reversible">
-        <substrate id="63" name="cpd:C05382"/>
         <substrate id="66" name="cpd:C00118"/>
+        <substrate id="63" name="cpd:C05382"/>
         <product id="61" name="cpd:C00279"/>
         <product id="71" name="cpd:C05345"/>
     </reaction>
