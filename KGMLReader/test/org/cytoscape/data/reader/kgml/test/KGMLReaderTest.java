@@ -21,13 +21,13 @@ public class KGMLReaderTest {
 
 	@Test
 	public void testRead() throws Exception {
-		reader1 = new KGMLReader("testData/bsu00010.xml");
+		reader1 = new KGMLReader("testData/kgml/metabolic/organisms/bsu/bsu00010.xml");
 		reader1.read();
 		
 		final int[] nodeArray = reader1.getNodeIndicesArray();
 	
 		assertNotNull(nodeArray);
-		assertEquals(90, nodeArray.length);
+		assertEquals(93, nodeArray.length);
 		
 		final int[] edgeArray = reader1.getEdgeIndicesArray();
 		
