@@ -32,16 +32,20 @@ public class KEGGClientTest {
 		CyNetwork net = Cytoscape.createNetwork("kegg dummy1");
 		CyAttributes attr = Cytoscape.getNetworkAttributes();
 		
-		KEGGRestClient.getCleint().importAnnotation("hsa00020", net);
+		KEGGRestClient.getCleint().importAnnotation("bsu00010", net);
+		
+		List<String> moduleIDs = attr.getListAttribute(net.getIdentifier(), "KEGG.moduleID");
+		assertNotNull(moduleIDs);
+		assertEquals(8, moduleIDs.size());
+		
+		List<String> relpathwayIDs = attr.getListAttribute(net.getIdentifier(), "KEGG.relpathwayID");
+		assertNotNull(relpathwayIDs);
+		assertEquals(6, relpathwayIDs.size());
 	
 //		String fullName = attr.getStringAttribute(net.getIdentifier(), "KEGG.fullName");
 //		assertNotNull(fullName);
 //		assertEquals("Citrate cycle (TCA cycle) - Homo sapiens (human)", fullName);
 		
-		List<String> moduleIDs = attr.getListAttribute(net.getIdentifier(), "KEGG.moduleID");
-		assertNotNull(moduleIDs);
-		assertEquals(6, moduleIDs.size());
-
 //		String modules = KEGGRestClient.getCleint().importAnnotation("hsa00020", net);
 //		assertNotNull(modules.split("\t"));
 //		assertEquals(6, modules.split("\t").length);
