@@ -15,6 +15,7 @@ import cytoscape.CyNetwork;
  * Very simple Client for togoWS Rest service.
  * 
  * @author kono
+ * @author Kozo.Nishida
  * 
  */
 public class KEGGRestClient {
@@ -36,7 +37,8 @@ public class KEGGRestClient {
 	}
 
 	private enum FieldType {
-		MODULE("modules"), MODULE_JSON("modules.json");
+		DBLINKS("dblinks"), REL_PATHWAY("relpathways"), MODULE("modules"), MODULE_JSON(
+				"modules.json");
 
 		private final String type;
 
@@ -69,15 +71,17 @@ public class KEGGRestClient {
 			throws IOException {
 
 		final String result = getEntries(DatabaseType.PATHWAY, pathwayID);
-		final String entryField = getEntryField(DatabaseType.PATHWAY, pathwayID, FieldType.MODULE);
-//		return entryField;
+		final String moduleEntryField = getEntryField(DatabaseType.PATHWAY,
+				pathwayID, FieldType.MODULE);
+		final String relpathwayEntryField = getEntryField(DatabaseType.PATHWAY,
+				pathwayID, FieldType.REL_PATHWAY);
 
-		if (entryField != null)
-			parser.mapModule(entryField, network);
-		
-//		if (entryField != null) {
-//			parser.mapJsonKeys(entryField, network);
-//		}
+		if (moduleEntryField != null) 
+			parser.mapModule(moduleEntryField, network);
+
+		if (relpathwayEntryField != null)
+			parser.mapRelpathway(relpathwayEntryField, network);
+
 	}
 
 	private String getEntries(final DatabaseType type, final String id)
@@ -94,17 +98,17 @@ public class KEGGRestClient {
 			return null;
 	}
 
-	private String getEntryField(final DatabaseType dbType, final String id, final FieldType fieldType)
-			throws IOException {
-		final HttpGet httpget = new HttpGet(KEGG_BASE_URL + dbType.getType() + "/" + id + "/" + fieldType.getType());
-		
+	private String getEntryField(final DatabaseType dbType, final String id,
+			final FieldType fieldType) throws IOException {
+		final HttpGet httpget = new HttpGet(KEGG_BASE_URL + dbType.getType()
+				+ "/" + id + "/" + fieldType.getType());
+
 		final HttpResponse response = httpclient.execute(httpget);
 		final HttpEntity entity = response.getEntity();
-		
+
 		if (entity != null) {
 			return EntityUtils.toString(entity);
-		}
-		else
+		} else
 			return null;
 	}
 }
