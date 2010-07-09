@@ -37,8 +37,8 @@ public class KEGGRestClient {
 	}
 
 	private enum FieldType {
-		DBLINKS("dblinks"), REL_PATHWAY("relpathways"), MODULE("modules"), MODULE_JSON(
-				"modules.json");
+		DISEASE("diseases"), DBLINKS("dblinks"), REL_PATHWAY("relpathways"), MODULE(
+				"modules"), MODULE_JSON("modules.json");
 
 		private final String type;
 
@@ -75,12 +75,26 @@ public class KEGGRestClient {
 				pathwayID, FieldType.MODULE);
 		final String relpathwayEntryField = getEntryField(DatabaseType.PATHWAY,
 				pathwayID, FieldType.REL_PATHWAY);
+		final String dblinkEntryField = getEntryField(DatabaseType.PATHWAY,
+				pathwayID, FieldType.DBLINKS);
+		final String diseaseEntryField = getEntryField(DatabaseType.PATHWAY,
+				pathwayID, FieldType.DISEASE);
 
-		if (moduleEntryField != null) 
+		if (moduleEntryField != null) {
 			parser.mapModule(moduleEntryField, network);
+		}
 
-		if (relpathwayEntryField != null)
+		if (relpathwayEntryField != null) {
 			parser.mapRelpathway(relpathwayEntryField, network);
+		}
+
+		if (dblinkEntryField != null) {
+			parser.mapDblink(dblinkEntryField, network);
+		}
+		
+		if (diseaseEntryField != null) {
+			parser.mapDisease(diseaseEntryField, network);
+		}
 
 	}
 
