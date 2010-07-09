@@ -66,6 +66,21 @@ public class PathwayMapper {
 	private static final String REACTION_TYPE_REVERSIBLE = "reversible";
 	private static final String REACTION_TYPE_IRREVERSIBLE = "irreversible";
 
+	// Default Values for Visual Style
+	private static final Color NODE_DEF_COLOR = Color.WHITE;
+	private static final Color EDGE_DEF_COLOR = new Color(50, 50, 50);
+	private static final Color NODE_LINE_DEF_COLOR = new Color(20, 20, 20);
+	private static final Color NODE_LABEL_DEF_COLOR = new Color(30, 30, 30);
+
+	private static final Color GENE_COLOR = new Color(153, 255, 153);
+	private static final Color COMPOUND_COLOR = new Color(0xAAAAEE);
+	private static final Color MAP_COLOR = new Color(0x00BFFF);
+
+	private static final Color GLOBAL_DEF_COLOR = new Color(0xAAAAAA);
+
+	private static final Font nodeLabelFont = new Font("SansSerif", 7,
+			Font.PLAIN);
+
 	public PathwayMapper(final Pathway pathway) {
 		this.pathway = pathway;
 		this.pathwayName = pathway.getName();
@@ -90,7 +105,6 @@ public class PathwayMapper {
 		}
 	}
 
-
 	private final Map<String, Entry> entryMap = new HashMap<String, Entry>();
 	private final Map<String, Entry> edgeEntryMap = new HashMap<String, Entry>();
 
@@ -100,8 +114,7 @@ public class PathwayMapper {
 	final Map<String, List<Entry>> cpdDataMap = new HashMap<String, List<Entry>>();
 	final Map<CyNode, Entry> geneDataMap = new HashMap<CyNode, Entry>();
 	private final Map<CyNode, String> entry2reaction = new HashMap<CyNode, String>();
-	
-	
+
 	private void mapNode() {
 
 		final String pathwayID = pathway.getName();
@@ -222,8 +235,8 @@ public class PathwayMapper {
 				if (entryMap.containsKey(rel.getEntry1())
 						&& entryMap.containsKey(rel.getEntry2())) {
 
-					if (entryMap.get(rel.getEntry1()).getType().equals(
-							KEGGEntryType.MAP.getTag())) {
+					if (entryMap.get(rel.getEntry1()).getType()
+							.equals(KEGGEntryType.MAP.getTag())) {
 						CyNode maplinkNode = nodeMap.get(rel.getEntry1());
 
 						for (Subtype sub : subs) {
@@ -270,7 +283,6 @@ public class PathwayMapper {
 
 	private List<CyEdge> mapReactionEdge() {
 
-		final String pathwayID = pathway.getName();
 		final String pathway_entryID = pathway.getNumber();
 		final List<Reaction> reactions = pathway.getReaction();
 		final List<CyEdge> edges = new ArrayList<CyEdge>();
@@ -360,9 +372,7 @@ public class PathwayMapper {
 				}
 			}
 		}
-
 		return edges;
-
 	}
 
 	protected void updateView(final CyNetwork network) {
@@ -395,39 +405,27 @@ public class PathwayMapper {
 		EdgeAppearanceCalculator eac = defStyle.getEdgeAppearanceCalculator();
 		GlobalAppearanceCalculator gac = defStyle
 				.getGlobalAppearanceCalculator();
-
-		// Default values
-		final Color nodeColor = Color.WHITE;
-		final Color edgeColor = Color.BLACK;
-		final Color nodeLineColor = new Color(20, 20, 20);
-		final Color nodeLabelColor = new Color(30, 30, 30);
-
-		final Color geneNodeColor = new Color(153, 255, 153);
-
-		final Font nodeLabelFont = new Font("SansSerif", 7, Font.PLAIN);
-
 		gac.setDefaultBackgroundColor(Color.white);
 
+		// Node Label Mapping
 		final PassThroughMapping m = new PassThroughMapping("", KEGG_LABEL);
-
 		final Calculator nodeLabelMappingCalc = new BasicCalculator(vsName
 				+ "-" + "NodeLabelMapping", m, VisualPropertyType.NODE_LABEL);
-
 		nac.setCalculator(nodeLabelMappingCalc);
 
 		nac.setNodeSizeLocked(false);
 
 		nac.getDefaultAppearance().set(VisualPropertyType.NODE_FILL_COLOR,
-				nodeColor);
+				NODE_DEF_COLOR);
 		nac.getDefaultAppearance().set(VisualPropertyType.NODE_SHAPE,
 				NodeShape.ROUND_RECT);
 
 		nac.getDefaultAppearance().set(VisualPropertyType.NODE_BORDER_COLOR,
-				nodeLineColor);
-		nac.getDefaultAppearance().set(VisualPropertyType.NODE_LINE_WIDTH, 1);
+				NODE_LINE_DEF_COLOR);
+		nac.getDefaultAppearance().set(VisualPropertyType.NODE_LINE_WIDTH, 0);
 
 		nac.getDefaultAppearance().set(VisualPropertyType.NODE_LABEL_COLOR,
-				nodeLabelColor);
+				NODE_LABEL_DEF_COLOR);
 		nac.getDefaultAppearance().set(VisualPropertyType.NODE_FONT_FACE,
 				nodeLabelFont);
 		nac.getDefaultAppearance().set(VisualPropertyType.NODE_FONT_SIZE, 6);
@@ -461,6 +459,7 @@ public class PathwayMapper {
 
 		eac.setCalculator(edgeTgtarrowShapeCalc);
 
+		// Node Shape Mapping
 		final DiscreteMapping nodeShape = new DiscreteMapping(NodeShape.RECT,
 				KEGG_ENTRY, ObjectMapping.NODE_MAPPING);
 		final Calculator nodeShapeCalc = new BasicCalculator(vsName + "-"
@@ -472,17 +471,47 @@ public class PathwayMapper {
 				NodeShape.ELLIPSE);
 		nac.setCalculator(nodeShapeCalc);
 
+		// Node Border Mapping
+		final DiscreteMapping nodeLineWidth = new DiscreteMapping(1,
+				KEGG_ENTRY, ObjectMapping.NODE_MAPPING);
+		final Calculator nodeLineWidthCalc = new BasicCalculator(vsName + "-"
+				+ "NodeBorderWidthMapping", nodeLineWidth,
+				VisualPropertyType.NODE_LINE_WIDTH);
+		nodeLineWidth.putMapValue(KEGGEntryType.MAP.getTag(), 0);
+		nodeLineWidth.putMapValue(KEGGEntryType.GENE.getTag(), 2);
+		nodeLineWidth.putMapValue(KEGGEntryType.ORTHOLOG.getTag(), 2);
+		nodeLineWidth.putMapValue(KEGGEntryType.COMPOUND.getTag(), 0);
+		nac.setCalculator(nodeLineWidthCalc);
+
+		// Node Opacity Mapping
+		final DiscreteMapping nodeOpacity = new DiscreteMapping(255,
+				KEGG_ENTRY, ObjectMapping.NODE_MAPPING);
+		final Calculator nodeOpacityCalc = new BasicCalculator(vsName + "-"
+				+ "NodeOpacityMapping", nodeOpacity,
+				VisualPropertyType.NODE_OPACITY);
+		nodeOpacity.putMapValue(KEGGEntryType.MAP.getTag(), 60);
+		nodeOpacity.putMapValue(KEGGEntryType.COMPOUND.getTag(), 200);
+		nac.setCalculator(nodeOpacityCalc);
+
+		// Special Case: Global Map (Metabolic Pathway)
 		if (pathway_entryID.equals(METABOLIC_PATHWAYS_ENTRY_ID)
 				|| pathway_entryID
 						.equals(BIOSYNTHESIS_OF_SECONDARY_METABOLITES_ENTRY_ID)) {
-			final DiscreteMapping nodeColorMap = new DiscreteMapping(nodeColor,
-					KEGG_COLOR, ObjectMapping.NODE_MAPPING);
+
+			// Set edge opacity
+			eac.getDefaultAppearance()
+					.set(VisualPropertyType.EDGE_OPACITY, 220);
+			nac.getDefaultAppearance()
+					.set(VisualPropertyType.NODE_OPACITY, 90);
+
+			final DiscreteMapping nodeColorMap = new DiscreteMapping(
+					NODE_DEF_COLOR, KEGG_COLOR, ObjectMapping.NODE_MAPPING);
 			final Calculator nodeColorCalc = new BasicCalculator(vsName + "-"
 					+ "NodeColorMapping", nodeColorMap,
 					VisualPropertyType.NODE_FILL_COLOR);
 
-			final DiscreteMapping edgeColorMap = new DiscreteMapping(edgeColor,
-					KEGG_COLOR, ObjectMapping.EDGE_MAPPING);
+			final DiscreteMapping edgeColorMap = new DiscreteMapping(
+					EDGE_DEF_COLOR, KEGG_COLOR, ObjectMapping.EDGE_MAPPING);
 			final Calculator edgeColorCalc = new BasicCalculator(vsName + "-"
 					+ "EdgeColorMapping", edgeColorMap,
 					VisualPropertyType.EDGE_COLOR);
@@ -497,35 +526,31 @@ public class PathwayMapper {
 				}
 			}
 
+			nodeColorMap.putMapValue("none", GLOBAL_DEF_COLOR);
+
 			final DiscreteMapping edgeWidthMap = new DiscreteMapping(3,
 					Semantics.INTERACTION, ObjectMapping.EDGE_MAPPING);
 			final Calculator edgeWidthCalc = new BasicCalculator(vsName + "-"
 					+ "EdgeWidthMapping", edgeWidthMap,
 					VisualPropertyType.EDGE_LINE_WIDTH);
-			edgeWidthMap.putMapValue("cc", 3);
+			edgeWidthMap.putMapValue("cc", 7);
 
 			nac.setCalculator(nodeColorCalc);
 			eac.setCalculator(edgeColorCalc);
 			eac.setCalculator(edgeWidthCalc);
 
 		} else {
-			final DiscreteMapping nodeColorMap = new DiscreteMapping(nodeColor,
-					KEGG_ENTRY, ObjectMapping.NODE_MAPPING);
+			final DiscreteMapping nodeColorMap = new DiscreteMapping(
+					NODE_DEF_COLOR, KEGG_ENTRY, ObjectMapping.NODE_MAPPING);
 			final Calculator nodeColorCalc = new BasicCalculator(vsName + "-"
 					+ "NodeColorMapping", nodeColorMap,
 					VisualPropertyType.NODE_FILL_COLOR);
-			nodeColorMap
-					.putMapValue(KEGGEntryType.GENE.getTag(), geneNodeColor);
+			nodeColorMap.putMapValue(KEGGEntryType.GENE.getTag(), GENE_COLOR);
+			nodeColorMap.putMapValue(KEGGEntryType.COMPOUND.getTag(),
+					COMPOUND_COLOR);
+			nodeColorMap.putMapValue(KEGGEntryType.MAP.getTag(), MAP_COLOR);
 			nac.setCalculator(nodeColorCalc);
 		}
-
-		final DiscreteMapping nodeBorderColorMap = new DiscreteMapping(
-				nodeColor, KEGG_ENTRY, ObjectMapping.NODE_MAPPING);
-		final Calculator nodeBorderColorCalc = new BasicCalculator(vsName + "-"
-				+ "NodeBorderColorMapping", nodeBorderColorMap,
-				VisualPropertyType.NODE_BORDER_COLOR);
-		nodeBorderColorMap.putMapValue(KEGGEntryType.MAP.getTag(), Color.BLUE);
-		nac.setCalculator(nodeBorderColorCalc);
 
 		final DiscreteMapping nodeWidth = new DiscreteMapping(30, "ID",
 				ObjectMapping.NODE_MAPPING);
@@ -539,9 +564,6 @@ public class PathwayMapper {
 
 		nac.setCalculator(nodeHeightCalc);
 		nac.setCalculator(nodeWidthCalc);
-
-		nodeWidth.setControllingAttributeName("ID", null, false);
-		nodeHeight.setControllingAttributeName("ID", null, false);
 
 		for (String key : nodeMap.keySet()) {
 
