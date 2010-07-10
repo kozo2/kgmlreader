@@ -23,11 +23,8 @@ public class KEGGResponseParser {
 		final List<String> moduleIDs = new ArrayList<String>();
 
 		for (final String module : modules.split("\t")) {
-
-			moduleIDs.add(module.split("  ")[0]);
-
-			System.out.println("--------Module: " + module.split("  ")[0]
-					+ " === " + module.split("  ")[1]);
+			final String[] parts = module.split("  ");
+			moduleIDs.add(parts[0]);
 		}
 
 		attr.setListAttribute(network.getIdentifier(), "KEGG.moduleID",
@@ -41,9 +38,6 @@ public class KEGGResponseParser {
 		for (String relpathway : relpathways.split("\t")) {
 			relpathwayIDs.add(relpathway.split("  ")[0]);
 
-			System.out.println("--------RelPathway: "
-					+ relpathway.split("  ")[0] + " === "
-					+ relpathway.split("  ")[1]);
 		}
 
 		attr.setListAttribute(network.getIdentifier(), "KEGG.relpathwayID",

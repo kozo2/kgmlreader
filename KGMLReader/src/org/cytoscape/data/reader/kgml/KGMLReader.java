@@ -51,6 +51,12 @@ public class KGMLReader extends AbstractGraphReader {
 			e.printStackTrace();
 		}
 	}
+	
+	public KGMLReader(final URL url) {
+		super(url.toString());
+		System.out.println("Debug: KGML URL name = " + fileName);
+		this.targetURL = url;
+	}
 
 	@Override
 	public void doPostProcessing(CyNetwork network) {
@@ -89,6 +95,7 @@ public class KGMLReader extends AbstractGraphReader {
 			pathway = (Pathway) unmarshaller.unmarshal(is);
 			networkName = CyNetworkNaming.getSuggestedNetworkTitle(pathway
 					.getTitle());
+			networkName = networkName + " (" + pathway.getOrg() + ")";
 
 		} catch (Exception e) {
 			e.printStackTrace();

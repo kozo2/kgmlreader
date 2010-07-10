@@ -2,6 +2,8 @@ package org.cytoscape.data.reader.kgml;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
+import java.net.URLConnection;
 
 import cytoscape.data.ImportHandler;
 import cytoscape.data.readers.GraphReader;
@@ -48,7 +50,7 @@ public class KGMLFilter extends CyFileFilter {
 	public boolean accept(File file) {
 		String fileName = file.getName();
 		boolean firstPass = false;
-
+		
 		//  First test:  file must end with one of the registered file extensions.
 		for (int i = 0; i < fileExtensions.length; i++) {
 			if (fileName.endsWith(fileExtensions[i])) {
@@ -70,6 +72,33 @@ public class KGMLFilter extends CyFileFilter {
 
 		return false;
 	}
+	
+	public boolean accept(URL url, String contentType) {
+		String fileName = url.toString();
+		boolean firstPass = false;
+		
+		//  First test:  file must end with one of the registered file extensions.
+		for (int i = 0; i < fileExtensions.length; i++) {
+			if (fileName.endsWith(fileExtensions[i])) {
+				firstPass = true;
+			}
+		}
+
+		if (firstPass) {
+			//  Second test:  file header must contain the KGML declaration
+			try {
+				final String header = getHeader(url);
+				
+				if (header.contains("KGML")) {
+					return true;
+				}
+			} catch (IOException e) {
+			}
+		}
+
+		return false;
+
+	}
 
 	/**
 	 * Gets the appropirate GraphReader object.
@@ -79,5 +108,9 @@ public class KGMLFilter extends CyFileFilter {
 	 */
 	public GraphReader getReader(String fileName) {
 		return new KGMLReader(fileName);
+	}
+	
+	public GraphReader getReader(URL url, URLConnection conn) {
+		return new KGMLReader(url);
 	}
 }
