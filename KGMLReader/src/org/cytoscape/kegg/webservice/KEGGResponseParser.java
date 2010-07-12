@@ -56,7 +56,7 @@ public class KEGGResponseParser {
 			if (reactionIDs != null) {
 				List<String> keggModules = new ArrayList<String>();
 				for (String reactionID : reactionIDs) {
-					System.out.println(reactionID.replace("rn:", ""));
+					
 					for (String moduleID : module2reactionMap.keySet()) {
 						if (module2reactionMap.get(moduleID).contains(
 								reactionID.replace("rn:", ""))) {
