@@ -1,6 +1,9 @@
 package org.cytoscape.kegg.webservice;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -10,6 +13,9 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
 import cytoscape.CyNetwork;
+import cytoscape.CyNode;
+import cytoscape.Cytoscape;
+import cytoscape.data.CyAttributes;
 
 /**
  * Very simple Client for togoWS Rest service.
@@ -21,6 +27,7 @@ import cytoscape.CyNetwork;
 public class KEGGRestClient {
 	private static final String KEGG_BASE_URL = "http://togows.dbcls.jp/entry/";
 	private static final String FORMAT_JSON = ".json";
+	private final CyAttributes attr;
 
 	private enum DatabaseType {
 		PATHWAY("kegg-pathway"), MODULE("kegg-module");
@@ -38,7 +45,7 @@ public class KEGGRestClient {
 
 	private enum FieldType {
 		DISEASE("diseases"), DBLINKS("dblinks"), REL_PATHWAY("relpathways"), MODULE(
-				"modules"), MODULE_JSON("modules.json");
+				"modules"), MODULE_JSON("modules.json"), REACTION("reactions");
 
 		private final String type;
 
@@ -64,7 +71,7 @@ public class KEGGRestClient {
 	private KEGGRestClient() {
 		this.httpclient = new DefaultHttpClient();
 		this.parser = new KEGGResponseParser();
-
+		this.attr = Cytoscape.getNetworkAttributes();
 	}
 
 	public void importAnnotation(final String pathwayID, CyNetwork network)
@@ -82,6 +89,7 @@ public class KEGGRestClient {
 
 		if (moduleEntryField != null) {
 			parser.mapModule(moduleEntryField, network);
+
 		}
 
 		if (relpathwayEntryField != null) {
@@ -91,9 +99,26 @@ public class KEGGRestClient {
 		if (dblinkEntryField != null) {
 			parser.mapDblink(dblinkEntryField, network);
 		}
-		
+
 		if (diseaseEntryField != null) {
 			parser.mapDisease(diseaseEntryField, network);
+		}
+
+		final List<String> moduleIDs = attr.getListAttribute(
+				network.getIdentifier(), "KEGG.moduleID");
+
+		final Map<String, List<String>> module2reactionMap = new HashMap<String, List<String>>();
+
+		for (String moduleID : moduleIDs) {
+			String moduleReactions = getEntryField(DatabaseType.MODULE,
+					moduleID, FieldType.REACTION);
+			module2reactionMap.put(moduleID,
+					parser.getReactionIDs(moduleReactions));
+
+		}
+		
+		if (module2reactionMap != null) {
+			parser.mapModuleReaction(module2reactionMap, network);
 		}
 
 	}
