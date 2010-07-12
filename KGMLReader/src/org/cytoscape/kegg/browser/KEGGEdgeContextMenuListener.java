@@ -8,6 +8,8 @@ import java.awt.event.ActionListener;
 import javax.swing.JCheckBox;
 import javax.swing.JInternalFrame;
 import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
 import cytoscape.Cytoscape;
@@ -58,12 +60,16 @@ public class KEGGEdgeContextMenuListener implements EdgeContextMenuListener {
 		menu.add(keggMenu);
 	}
 	
+	/**
+	 * Show glass pane on the KEGG pathways.
+	 */
 	private void showGlass() {
-		System.out.println("----Showing");
+		System.out.println("# Display Glass");
 		final NetworkViewManager viewManager = Cytoscape.getDesktop().getNetworkViewManager();
 		final JInternalFrame frame = viewManager.getInternalFrame(Cytoscape.getCurrentNetworkView());
+	    
 		if(frame.getGlassPane() != glass) {
-			glass = new FloatingGlassPane(view);
+			glass = new FloatingGlassPane(view);			
 			frame.setGlassPane(glass);
 		}
 		frame.getGlassPane().setVisible(true);
