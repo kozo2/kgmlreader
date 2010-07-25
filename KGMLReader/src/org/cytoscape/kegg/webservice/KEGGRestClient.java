@@ -28,9 +28,10 @@ public class KEGGRestClient {
 	private static final String KEGG_BASE_URL = "http://togows.dbcls.jp/entry/";
 	private static final String FORMAT_JSON = ".json";
 	private final CyAttributes attr;
+	private final CyAttributes nodeAttr;
 
 	private enum DatabaseType {
-		PATHWAY("kegg-pathway"), MODULE("kegg-module");
+		COMPOUND("compound"), PATHWAY("kegg-pathway"), MODULE("kegg-module");
 
 		private final String type;
 
@@ -45,7 +46,8 @@ public class KEGGRestClient {
 
 	private enum FieldType {
 		DISEASE("diseases"), DBLINKS("dblinks"), REL_PATHWAY("relpathways"), MODULE(
-				"modules"), MODULE_JSON("modules.json"), REACTION("reactions");
+				"modules"), MODULE_JSON("modules.json"), NAME("name"), REACTION(
+				"reactions");
 
 		private final String type;
 
@@ -72,6 +74,23 @@ public class KEGGRestClient {
 		this.httpclient = new DefaultHttpClient();
 		this.parser = new KEGGResponseParser();
 		this.attr = Cytoscape.getNetworkAttributes();
+		this.nodeAttr = Cytoscape.getNodeAttributes();
+	}
+
+	public void importCompoundName()
+			throws IOException {
+
+		final List<CyNode> cyNodes = Cytoscape.getCyNodesList();
+		for (CyNode cyNode : cyNodes) {
+			if (nodeAttr.getStringAttribute(cyNode.getIdentifier(),
+					"KEGG.entry").equals("compound")) {
+				final String compoundName = getEntryField(
+						DatabaseType.COMPOUND, nodeAttr.getStringAttribute(
+								cyNode.getIdentifier(), "KEGG.label"),
+						FieldType.NAME);
+				nodeAttr.setAttribute(cyNode.getIdentifier(), "KEGG.label.first", compoundName);
+			}
+		}
 	}
 
 	public void importAnnotation(final String pathwayID, CyNetwork network)
@@ -116,7 +135,7 @@ public class KEGGRestClient {
 					parser.getReactionIDs(moduleReactions));
 
 		}
-		
+
 		if (module2reactionMap != null) {
 			parser.mapModuleReaction(module2reactionMap, network);
 		}
