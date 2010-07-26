@@ -1,0 +1,203 @@
+<?xml version="1.0"?>
+<!DOCTYPE pathway SYSTEM "http://www.genome.jp/kegg/xml/KGML_v0.7.1_.dtd">
+<!-- Creation date: Jun 23, 2010 16:39:05 +0900 (JST) -->
+<pathway name="path:bsu02040" org="bsu" number="02040"
+         title="Flagellar assembly"
+         image="http://www.genome.jp/kegg/pathway/bsu/bsu02040.png"
+         link="http://www.genome.jp/kegg-bin/show_pathway?bsu02040">
+    <entry id="1" name="path:bsu03070" type="map"
+        link="http://www.kegg.jp/dbget-bin/www_bget?bsu03070">
+        <graphics name="Bacterial secretion system" fgcolor="#000000" bgcolor="#FFFFFF"
+             type="roundrectangle" x="151" y="570" width="140" height="26"/>
+    </entry>
+    <entry id="2" name="path:bsu02030" type="map"
+        link="http://www.kegg.jp/dbget-bin/www_bget?bsu02030">
+        <graphics name="Bacterial chemotaxis" fgcolor="#000000" bgcolor="#FFFFFF"
+             type="roundrectangle" x="429" y="564" width="122" height="26"/>
+    </entry>
+    <entry id="3" name="ko:K02403" type="ortholog"
+        link="http://www.kegg.jp/dbget-bin/www_bget?K02403">
+        <graphics name="K02403" fgcolor="#000000" bgcolor="#FFFFFF"
+             type="rectangle" x="294" y="658" width="46" height="17"/>
+    </entry>
+    <entry id="4" name="ko:K02402" type="ortholog"
+        link="http://www.kegg.jp/dbget-bin/www_bget?K02402">
+        <graphics name="K02402" fgcolor="#000000" bgcolor="#FFFFFF"
+             type="rectangle" x="294" y="641" width="46" height="17"/>
+    </entry>
+    <entry id="5" name="bsu:BSU35430" type="gene"
+        link="http://www.kegg.jp/dbget-bin/www_bget?bsu:BSU35430">
+        <graphics name="flgM" fgcolor="#000000" bgcolor="#BFFFBF"
+             type="rectangle" x="294" y="692" width="46" height="17"/>
+    </entry>
+    <entry id="6" name="ko:K02386" type="ortholog"
+        link="http://www.kegg.jp/dbget-bin/www_bget?K02386">
+        <graphics name="K02386" fgcolor="#000000" bgcolor="#FFFFFF"
+             type="rectangle" x="93" y="664" width="46" height="17"/>
+    </entry>
+    <entry id="7" name="ko:K02399" type="ortholog"
+        link="http://www.kegg.jp/dbget-bin/www_bget?K02399">
+        <graphics name="K02399" fgcolor="#000000" bgcolor="#FFFFFF"
+             type="rectangle" x="93" y="641" width="46" height="17"/>
+    </entry>
+    <entry id="8" name="bsu:BSU35320" type="gene"
+        link="http://www.kegg.jp/dbget-bin/www_bget?bsu:BSU35320">
+        <graphics name="fliT" fgcolor="#000000" bgcolor="#BFFFBF"
+             type="rectangle" x="231" y="641" width="46" height="17"/>
+    </entry>
+    <entry id="9" name="bsu:BSU16250" type="gene"
+        link="http://www.kegg.jp/dbget-bin/www_bget?bsu:BSU16250">
+        <graphics name="fliJ" fgcolor="#000000" bgcolor="#BFFFBF"
+             type="rectangle" x="139" y="641" width="46" height="17"/>
+    </entry>
+    <entry id="10" name="bsu:BSU35330" type="gene"
+        link="http://www.kegg.jp/dbget-bin/www_bget?bsu:BSU35330">
+        <graphics name="fliS" fgcolor="#000000" bgcolor="#BFFFBF"
+             type="rectangle" x="185" y="641" width="46" height="17"/>
+    </entry>
+    <entry id="11" name="bsu:BSU16370" type="gene"
+        link="http://www.kegg.jp/dbget-bin/www_bget?bsu:BSU16370">
+        <graphics name="fliR" fgcolor="#000000" bgcolor="#BFFFBF"
+             type="rectangle" x="299" y="594" width="46" height="17"/>
+    </entry>
+    <entry id="12" name="bsu:BSU16350" type="gene"
+        link="http://www.kegg.jp/dbget-bin/www_bget?bsu:BSU16350">
+        <graphics name="fliP" fgcolor="#000000" bgcolor="#BFFFBF"
+             type="rectangle" x="253" y="594" width="46" height="17"/>
+    </entry>
+    <entry id="13" name="bsu:BSU16360" type="gene"
+        link="http://www.kegg.jp/dbget-bin/www_bget?bsu:BSU16360">
+        <graphics name="fliQ" fgcolor="#000000" bgcolor="#BFFFBF"
+             type="rectangle" x="299" y="577" width="46" height="17"/>
+    </entry>
+    <entry id="14" name="bsu:BSU16340" type="gene"
+        link="http://www.kegg.jp/dbget-bin/www_bget?bsu:BSU16340">
+        <graphics name="fliZ" fgcolor="#000000" bgcolor="#BFFFBF"
+             type="rectangle" x="253" y="577" width="46" height="17"/>
+    </entry>
+    <entry id="15" name="bsu:BSU16240" type="gene"
+        link="http://www.kegg.jp/dbget-bin/www_bget?bsu:BSU16240">
+        <graphics name="fliI" fgcolor="#000000" bgcolor="#BFFFBF"
+             type="rectangle" x="253" y="560" width="46" height="17"/>
+    </entry>
+    <entry id="16" name="bsu:BSU16230" type="gene"
+        link="http://www.kegg.jp/dbget-bin/www_bget?bsu:BSU16230">
+        <graphics name="fliH" fgcolor="#000000" bgcolor="#BFFFBF"
+             type="rectangle" x="253" y="543" width="46" height="17"/>
+    </entry>
+    <entry id="17" name="bsu:BSU16320" type="gene"
+        link="http://www.kegg.jp/dbget-bin/www_bget?bsu:BSU16320">
+        <graphics name="fliY" fgcolor="#000000" bgcolor="#BFFFBF"
+             type="rectangle" x="391" y="504" width="46" height="17"/>
+    </entry>
+    <entry id="18" name="bsu:BSU16310" type="gene"
+        link="http://www.kegg.jp/dbget-bin/www_bget?bsu:BSU16310">
+        <graphics name="fliM" fgcolor="#000000" bgcolor="#BFFFBF"
+             type="rectangle" x="391" y="487" width="46" height="17"/>
+    </entry>
+    <entry id="19" name="bsu:BSU16220" type="gene"
+        link="http://www.kegg.jp/dbget-bin/www_bget?bsu:BSU16220">
+        <graphics name="fliG" fgcolor="#000000" bgcolor="#BFFFBF"
+             type="rectangle" x="391" y="470" width="46" height="17"/>
+    </entry>
+    <entry id="20" name="bsu:BSU16210" type="gene"
+        link="http://www.kegg.jp/dbget-bin/www_bget?bsu:BSU16210">
+        <graphics name="fliF" fgcolor="#000000" bgcolor="#BFFFBF"
+             type="rectangle" x="391" y="446" width="46" height="17"/>
+    </entry>
+    <entry id="21" name="bsu:BSU16270" type="gene"
+        link="http://www.kegg.jp/dbget-bin/www_bget?bsu:BSU16270">
+        <graphics name="fliK" fgcolor="#000000" bgcolor="#BFFFBF"
+             type="rectangle" x="514" y="263" width="46" height="17"/>
+    </entry>
+    <entry id="22" name="bsu:BSU35150 bsu:BSU35360" type="gene"
+        link="http://www.kegg.jp/dbget-bin/www_bget?bsu:BSU35150+bsu:BSU35360">
+        <graphics name="yvzB..." fgcolor="#000000" bgcolor="#BFFFBF"
+             type="rectangle" x="441" y="144" width="46" height="17"/>
+    </entry>
+    <entry id="23" name="bsu:BSU16280" type="gene"
+        link="http://www.kegg.jp/dbget-bin/www_bget?bsu:BSU16280">
+        <graphics name="flgD" fgcolor="#000000" bgcolor="#BFFFBF"
+             type="rectangle" x="514" y="280" width="46" height="17"/>
+    </entry>
+    <entry id="24" name="ko:K02391" type="ortholog"
+        link="http://www.kegg.jp/dbget-bin/www_bget?K02391">
+        <graphics name="K02391" fgcolor="#000000" bgcolor="#FFFFFF"
+             type="rectangle" x="186" y="333" width="46" height="17"/>
+    </entry>
+    <entry id="25" name="bsu:BSU16290" type="gene"
+        link="http://www.kegg.jp/dbget-bin/www_bget?bsu:BSU16290">
+        <graphics name="flgG" fgcolor="#000000" bgcolor="#BFFFBF"
+             type="rectangle" x="345" y="271" width="46" height="17"/>
+    </entry>
+    <entry id="26" name="bsu:BSU35410" type="gene"
+        link="http://www.kegg.jp/dbget-bin/www_bget?bsu:BSU35410">
+        <graphics name="flgK" fgcolor="#000000" bgcolor="#BFFFBF"
+             type="rectangle" x="417" y="221" width="46" height="17"/>
+    </entry>
+    <entry id="27" name="bsu:BSU35400" type="gene"
+        link="http://www.kegg.jp/dbget-bin/www_bget?bsu:BSU35400">
+        <graphics name="flgL" fgcolor="#000000" bgcolor="#BFFFBF"
+             type="rectangle" x="417" y="198" width="46" height="17"/>
+    </entry>
+    <entry id="28" name="bsu:BSU35340" type="gene"
+        link="http://www.kegg.jp/dbget-bin/www_bget?bsu:BSU35340">
+        <graphics name="fliD" fgcolor="#000000" bgcolor="#BFFFBF"
+             type="rectangle" x="488" y="51" width="46" height="17"/>
+    </entry>
+    <entry id="29" name="path:bsu02040" type="map"
+        link="http://www.kegg.jp/dbget-bin/www_bget?bsu02040">
+        <graphics name="TITLE:Flagellar assembly" fgcolor="#000000" bgcolor="#FFFFFF"
+             type="roundrectangle" x="134" y="58" width="188" height="25"/>
+    </entry>
+    <entry id="30" name="bsu:BSU16200" type="gene"
+        link="http://www.kegg.jp/dbget-bin/www_bget?bsu:BSU16200">
+        <graphics name="fliE" fgcolor="#000000" bgcolor="#BFFFBF"
+             type="rectangle" x="345" y="411" width="46" height="17"/>
+    </entry>
+    <entry id="31" name="bsu:BSU16190" type="gene"
+        link="http://www.kegg.jp/dbget-bin/www_bget?bsu:BSU16190">
+        <graphics name="flgC" fgcolor="#000000" bgcolor="#BFFFBF"
+             type="rectangle" x="437" y="411" width="46" height="17"/>
+    </entry>
+    <entry id="32" name="bsu:BSU16180" type="gene"
+        link="http://www.kegg.jp/dbget-bin/www_bget?bsu:BSU16180">
+        <graphics name="flgB" fgcolor="#000000" bgcolor="#BFFFBF"
+             type="rectangle" x="391" y="411" width="46" height="17"/>
+    </entry>
+    <entry id="33" name="ko:K02394" type="ortholog"
+        link="http://www.kegg.jp/dbget-bin/www_bget?K02394">
+        <graphics name="K02394" fgcolor="#000000" bgcolor="#FFFFFF"
+             type="rectangle" x="357" y="383" width="46" height="17"/>
+    </entry>
+    <entry id="34" name="ko:K02393" type="ortholog"
+        link="http://www.kegg.jp/dbget-bin/www_bget?K02393">
+        <graphics name="K02393" fgcolor="#000000" bgcolor="#FFFFFF"
+             type="rectangle" x="357" y="362" width="46" height="17"/>
+    </entry>
+    <entry id="35" name="bsu:BSU36390 bsu:BSU36400" type="gene"
+        link="http://www.kegg.jp/dbget-bin/www_bget?bsu:BSU36390+bsu:BSU36400">
+        <graphics name="flhP..." fgcolor="#000000" bgcolor="#BFFFBF"
+             type="rectangle" x="345" y="333" width="46" height="17"/>
+    </entry>
+    <entry id="36" name="bsu:BSU13690 bsu:BSU29730" type="gene"
+        link="http://www.kegg.jp/dbget-bin/www_bget?bsu:BSU13690+bsu:BSU29730">
+        <graphics name="motA..." fgcolor="#000000" bgcolor="#BFFFBF"
+             type="rectangle" x="182" y="444" width="46" height="17"/>
+    </entry>
+    <entry id="37" name="bsu:BSU16390" type="gene"
+        link="http://www.kegg.jp/dbget-bin/www_bget?bsu:BSU16390">
+        <graphics name="flhA" fgcolor="#000000" bgcolor="#BFFFBF"
+             type="rectangle" x="235" y="502" width="46" height="17"/>
+    </entry>
+    <entry id="38" name="bsu:BSU16380" type="gene"
+        link="http://www.kegg.jp/dbget-bin/www_bget?bsu:BSU16380">
+        <graphics name="flhB" fgcolor="#000000" bgcolor="#BFFFBF"
+             type="rectangle" x="292" y="502" width="46" height="17"/>
+    </entry>
+    <entry id="39" name="bsu:BSU13680 bsu:BSU29720" type="gene"
+        link="http://www.kegg.jp/dbget-bin/www_bget?bsu:BSU13680+bsu:BSU29720">
+        <graphics name="motB..." fgcolor="#000000" bgcolor="#BFFFBF"
+             type="rectangle" x="159" y="407" width="46" height="17"/>
+    </entry>
+</pathway>
