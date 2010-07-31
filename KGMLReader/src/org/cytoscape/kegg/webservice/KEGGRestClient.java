@@ -67,11 +67,9 @@ public class KEGGRestClient {
 		return client;
 	}
 
-	private final HttpClient httpclient;
 	private final KEGGResponseParser parser;
 
 	private KEGGRestClient() {
-		this.httpclient = new DefaultHttpClient();
 		this.parser = new KEGGResponseParser();
 		this.attr = Cytoscape.getNetworkAttributes();
 		this.nodeAttr = Cytoscape.getNodeAttributes();
@@ -147,6 +145,7 @@ public class KEGGRestClient {
 		final HttpGet httpget = new HttpGet(KEGG_BASE_URL + type.getType()
 				+ "/" + id);
 
+		final DefaultHttpClient httpclient = new DefaultHttpClient();
 		final HttpResponse response = httpclient.execute(httpget);
 		final HttpEntity entity = response.getEntity();
 
@@ -161,6 +160,7 @@ public class KEGGRestClient {
 		final HttpGet httpget = new HttpGet(KEGG_BASE_URL + dbType.getType()
 				+ "/" + id + "/" + fieldType.getType());
 
+		final DefaultHttpClient httpclient = new DefaultHttpClient();
 		final HttpResponse response = httpclient.execute(httpget);
 		final HttpEntity entity = response.getEntity();
 
