@@ -5,6 +5,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Date;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
@@ -16,6 +19,7 @@ import cytoscape.CyNetwork;
 import cytoscape.Cytoscape;
 import cytoscape.data.CyAttributes;
 import cytoscape.data.readers.AbstractGraphReader;
+import cytoscape.logger.CyLogger;
 import cytoscape.util.CyNetworkNaming;
 import cytoscape.util.URLUtil;
 
@@ -30,6 +34,9 @@ public class KGMLReader extends AbstractGraphReader {
 	static final String IMAGE = "KEGG.image";
 	static final String LINK = "KEGG.link";
 	static final String TITLE = "KEGG.title";
+
+	// For importing annotation in background thread
+	final ExecutorService ex = Executors.newSingleThreadExecutor();
 
 	private URL targetURL;
 
@@ -51,7 +58,7 @@ public class KGMLReader extends AbstractGraphReader {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public KGMLReader(final URL url) {
 		super(url.toString());
 		System.out.println("Debug: KGML URL name = " + fileName);
@@ -121,31 +128,49 @@ public class KGMLReader extends AbstractGraphReader {
 		final CyAttributes netAttr = Cytoscape.getNetworkAttributes();
 		netAttr.setAttribute(network.getIdentifier(), PathwayMapper.KEGG_NAME,
 				pathway.getName());
-		netAttr
-				.setAttribute(network.getIdentifier(), SPECIES, pathway
-						.getOrg());
-		netAttr.setAttribute(network.getIdentifier(), NUMBER, pathway
-				.getNumber());
-		netAttr
-				.setAttribute(network.getIdentifier(), IMAGE, pathway
-						.getImage());
+		netAttr.setAttribute(network.getIdentifier(), SPECIES, pathway.getOrg());
+		netAttr.setAttribute(network.getIdentifier(), NUMBER,
+				pathway.getNumber());
+		netAttr.setAttribute(network.getIdentifier(), IMAGE, pathway.getImage());
 		netAttr.setAttribute(network.getIdentifier(), LINK, pathway.getLink());
-		netAttr
-				.setAttribute(network.getIdentifier(), TITLE, pathway
-						.getTitle());
+		netAttr.setAttribute(network.getIdentifier(), TITLE, pathway.getTitle());
 		netAttr.setAttribute(network.getIdentifier(), NETWORK_TYPE,
 				NETWORK_TYPE_VALUE);
 
 		if (!pathway.getNumber().equals("01100")
-				&& !pathway.getNumber().equals("01110")) {
+				&& !pathway.getNumber().equals("01110")
+				&& KGMLReaderPlugin.importAnnotation) {
+
+			Cytoscape.getDesktop().setStatusBarMsg(
+					"Loading KEGG annotation for " + network.getTitle()
+							+ " from TogoWS in background...");
+			ex.execute(new ImportAnnotationTask(network));
+		}
+
+	}
+
+	class ImportAnnotationTask implements Runnable {
+
+		final CyNetwork network;
+
+		ImportAnnotationTask(final CyNetwork network) {
+			this.network = network;
+		}
+
+		public void run() {
 			try {
 				KEGGRestClient.getCleint().importAnnotation(
 						pathway.getOrg() + pathway.getNumber(), network);
 				KEGGRestClient.getCleint().importCompoundName();
 			} catch (IOException e) {
-
 				e.printStackTrace();
+				CyLogger.getLogger().error("Failed to import annotation.", e);
+				Cytoscape.getDesktop().setStatusBarMsg("");
 			}
+			final Date time = new Date(System.currentTimeMillis());
+			Cytoscape.getDesktop().setStatusBarMsg(
+					"Background task finished: KEGG annotation import for "
+							+ network.getTitle() + " - " + time.toString());
 		}
 
 	}

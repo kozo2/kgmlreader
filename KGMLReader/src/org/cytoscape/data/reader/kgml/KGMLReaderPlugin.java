@@ -3,6 +3,7 @@ package org.cytoscape.data.reader.kgml;
 import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
@@ -25,6 +26,8 @@ public class KGMLReaderPlugin extends CytoscapePlugin {
 	// For now, Metabolic pathways only.
 	private static final String KEGG_PATHWAY_WEB = "http://www.genome.jp/kegg-bin/get_htext?htext=br08901.keg&filedir=/files&extend=A1&open=A2#A2";
 
+	static Boolean importAnnotation = true;
+	
 	public KGMLReaderPlugin() {
 		final ImportHandler importHandler = new ImportHandler();
 		importHandler.addFilter(new KGMLFilter());
@@ -43,6 +46,8 @@ public class KGMLReaderPlugin extends CytoscapePlugin {
 
 	private void addMenu() {
 		final JMenu menu = new JMenu("KEGG Browser");
+		
+		final JMenu optionMenu = new JMenu("Options");
 
 		Cytoscape.getDesktop().getCyMenus().getMenuBar().getMenu("Plugins")
 				.add(menu);
@@ -53,5 +58,18 @@ public class KGMLReaderPlugin extends CytoscapePlugin {
 				cytoscape.util.OpenBrowser.openURL(KEGG_PATHWAY_WEB);
 			}
 		}));
+		
+		// Sub menu for options
+		final JCheckBoxMenuItem isAutomaticImportEnabled = new JCheckBoxMenuItem();
+		isAutomaticImportEnabled.setSelected(true);
+		isAutomaticImportEnabled.setAction(new AbstractAction("Automatic Annotation Import from TogoWS") {
+			public void actionPerformed(ActionEvent e) {
+				importAnnotation = isAutomaticImportEnabled.isSelected();
+				
+				System.out.println("## Auto annotation import is " + importAnnotation);
+			}
+		});
+		optionMenu.add(isAutomaticImportEnabled);
+		menu.add(optionMenu);
 	}
 }
