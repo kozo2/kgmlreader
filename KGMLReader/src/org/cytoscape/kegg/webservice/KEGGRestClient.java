@@ -92,10 +92,10 @@ public class KEGGRestClient {
 			}
 		}
 
-		final CyNetworkView view = Cytoscape.getNetworkView(network
-				.getIdentifier());
-		Cytoscape.getVisualMappingManager().setNetworkView(view);
-		view.redrawGraph(false, true);
+//		final CyNetworkView view = Cytoscape.getNetworkView(network
+//				.getIdentifier());
+//		Cytoscape.getVisualMappingManager().setNetworkView(view);
+//		view.redrawGraph(false, true);
 		
 	}
 
