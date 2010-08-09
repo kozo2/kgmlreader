@@ -164,8 +164,10 @@ public class PathwayMapper {
 							if (grap != null && grap.getName() != null) {
 								nodeAttr.setAttribute(node.getIdentifier(),
 										KEGG_LABEL, grap.getName());
-								final String[] labels = grap.getName().split(", ");
-								final List<String> labelList = Arrays.asList(labels);
+								final String[] labels = grap.getName().split(
+										", ");
+								final List<String> labelList = Arrays
+										.asList(labels);
 								nodeAttr.setListAttribute(node.getIdentifier(),
 										KEGG_LABEL_LIST, labelList);
 								nodeAttr.setAttribute(node.getIdentifier(),
@@ -417,7 +419,8 @@ public class PathwayMapper {
 		gac.setDefaultBackgroundColor(Color.white);
 
 		// Node Label Mapping
-		final PassThroughMapping m = new PassThroughMapping("", KEGG_LABEL_LIST_FIRST);
+		final PassThroughMapping m = new PassThroughMapping("",
+				KEGG_LABEL_LIST_FIRST);
 		final Calculator nodeLabelMappingCalc = new BasicCalculator(vsName
 				+ "-" + "NodeLabelMapping", m, VisualPropertyType.NODE_LABEL);
 		nac.setCalculator(nodeLabelMappingCalc);
@@ -442,6 +445,8 @@ public class PathwayMapper {
 		// Default Edge appr
 		eac.getDefaultAppearance().set(VisualPropertyType.EDGE_TGTARROW_SHAPE,
 				ArrowShape.DELTA);
+		eac.getDefaultAppearance().set(VisualPropertyType.EDGE_TGTARROW_OPACITY,
+				50);
 		final DiscreteMapping edgeLineStyle = new DiscreteMapping(
 				LineStyle.SOLID, KEGG_RELATION, ObjectMapping.EDGE_MAPPING);
 		final Calculator edgeLineStyleCalc = new BasicCalculator(vsName + "-"
@@ -510,8 +515,7 @@ public class PathwayMapper {
 			// Set edge opacity
 			eac.getDefaultAppearance()
 					.set(VisualPropertyType.EDGE_OPACITY, 220);
-			nac.getDefaultAppearance()
-					.set(VisualPropertyType.NODE_OPACITY, 90);
+			nac.getDefaultAppearance().set(VisualPropertyType.NODE_OPACITY, 90);
 
 			final DiscreteMapping nodeColorMap = new DiscreteMapping(
 					NODE_DEF_COLOR, KEGG_COLOR, ObjectMapping.NODE_MAPPING);

@@ -87,6 +87,7 @@ public class KEGGRestClient {
 								cyNode.getIdentifier(), "KEGG.label"),
 						FieldType.NAME);
 				nodeAttr.setAttribute(cyNode.getIdentifier(), "KEGG.label.first", compoundName);
+				nodeAttr.setAttribute(cyNode.getIdentifier(), "compound.label.width", 10);
 			}
 		}
 	}
