@@ -16,6 +16,7 @@ import cytoscape.CyNetwork;
 import cytoscape.CyNode;
 import cytoscape.Cytoscape;
 import cytoscape.data.CyAttributes;
+import cytoscape.view.CyNetworkView;
 
 /**
  * Very simple Client for togoWS Rest service.
@@ -75,7 +76,7 @@ public class KEGGRestClient {
 		this.nodeAttr = Cytoscape.getNodeAttributes();
 	}
 
-	public void importCompoundName()
+	public void importCompoundName(CyNetwork network)
 			throws IOException {
 
 		final List<CyNode> cyNodes = Cytoscape.getCyNodesList();
@@ -90,6 +91,12 @@ public class KEGGRestClient {
 				nodeAttr.setAttribute(cyNode.getIdentifier(), "compound.label.width", 10);
 			}
 		}
+
+		final CyNetworkView view = Cytoscape.getNetworkView(network
+				.getIdentifier());
+		Cytoscape.getVisualMappingManager().setNetworkView(view);
+		view.redrawGraph(false, true);
+		
 	}
 
 	public void importAnnotation(final String pathwayID, CyNetwork network)
