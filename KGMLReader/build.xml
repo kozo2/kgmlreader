@@ -16,7 +16,7 @@
 
 	<!--  The directory containing library jar files -->
 	<property name="cyto.dir" value="../cytoscape" />
-	<property name="cyto.lib.dir" value="${cyto.dir}/lib" />
+        <property name="cyto.lib.dir" value="${cyto.dir}/legacy/lib" />
 	<property name="lib.dir" value="lib" />
 	<property name="resources.dir" value="resources" />
 
