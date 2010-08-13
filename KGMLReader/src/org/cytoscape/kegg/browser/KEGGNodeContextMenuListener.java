@@ -15,10 +15,12 @@ import javax.swing.JPopupMenu;
 import org.cytoscape.data.reader.kgml.KEGGEntryType;
 
 import cytoscape.Cytoscape;
+import cytoscape.actions.LoadNetworkTask;
 import cytoscape.data.CyAttributes;
 import cytoscape.view.CyNetworkView;
 
 import ding.view.NodeContextMenuListener;
+import cytoscape.actions.LoadNetworkTask;
 
 /**
  * Add context menu for KEGG pathways
@@ -34,12 +36,18 @@ public class KEGGNodeContextMenuListener implements NodeContextMenuListener {
 	private static final String COMPOUND_DBGET_URL = "http://www.genome.jp/dbget-bin/www_bget?cpd:";
 	private static final String REACTION_DBGET_URL = "http://www.genome.jp/dbget-bin/www_bget?";
 	private static final String MAP_DBGET_URL = "http://www.genome.jp/dbget-bin/www_bget?pathway+";
+	
+	private static final String KGML_URL = "ftp://ftp.genome.jp/pub/kegg/xml/kgml/metabolic/organisms/";
 
 	private CyAttributes nodeAttr = Cytoscape.getNodeAttributes();
 	private final CyNetworkView view;
 
 	public KEGGNodeContextMenuListener(CyNetworkView view) {
 		this.view = view;
+	}
+	
+	private URL convertToFTP(String mapID) throws MalformedURLException {
+		return new URL(KGML_URL + mapID.substring(0, 3) + "/" + mapID + ".xml");
 	}
 
 	@Override
@@ -88,8 +96,14 @@ public class KEGGNodeContextMenuListener implements NodeContextMenuListener {
 				item.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						cytoscape.util.OpenBrowser.openURL(MAP_DBGET_URL
-								+ mapID);
+//						cytoscape.util.OpenBrowser.openURL(MAP_DBGET_URL
+//								+ mapID);
+						try {
+							LoadNetworkTask.loadURL(convertToFTP(mapID), true);
+						} catch (MalformedURLException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
 					}
 				});
 			} catch (MalformedURLException e) {
