@@ -17,6 +17,7 @@ import cytoscape.CyNode;
 import cytoscape.Cytoscape;
 import cytoscape.data.CyAttributes;
 import cytoscape.view.CyNetworkView;
+import cytoscape.visual.VisualStyle;
 
 /**
  * Very simple Client for togoWS Rest service.
@@ -76,10 +77,13 @@ public class KEGGRestClient {
 		this.nodeAttr = Cytoscape.getNodeAttributes();
 	}
 
-	public void importCompoundName(CyNetwork network)
+	public void importCompoundName(final String pathwayName, CyNetwork network)
 			throws IOException {
 
 		final List<CyNode> cyNodes = Cytoscape.getCyNodesList();
+		final String vsName = "KEGG: " + network.getTitle() + " ("
+				+ pathwayName + ")";
+
 		for (CyNode cyNode : cyNodes) {
 			if (nodeAttr.getStringAttribute(cyNode.getIdentifier(),
 					"KEGG.entry").equals("compound")) {
@@ -87,16 +91,21 @@ public class KEGGRestClient {
 						DatabaseType.COMPOUND, nodeAttr.getStringAttribute(
 								cyNode.getIdentifier(), "KEGG.label"),
 						FieldType.NAME);
-				nodeAttr.setAttribute(cyNode.getIdentifier(), "KEGG.label.first", compoundName);
-				nodeAttr.setAttribute(cyNode.getIdentifier(), "compound.label.width", 10);
+				nodeAttr.setAttribute(cyNode.getIdentifier(),
+						"KEGG.label.first", compoundName);
+				nodeAttr.setAttribute(cyNode.getIdentifier(),
+						"compound.label.width", 10);
 			}
 		}
 
-//		final CyNetworkView view = Cytoscape.getNetworkView(network
-//				.getIdentifier());
-//		Cytoscape.getVisualMappingManager().setNetworkView(view);
-//		view.redrawGraph(false, true);
-		
+		final VisualStyle targetStyle = Cytoscape.getVisualMappingManager()
+				.getCalculatorCatalog().getVisualStyle(vsName);
+		Cytoscape.getVisualMappingManager().setVisualStyle(targetStyle);
+		final CyNetworkView view = Cytoscape.getNetworkView(network
+				.getIdentifier());
+		Cytoscape.getVisualMappingManager().setNetworkView(view);
+		view.redrawGraph(false, true);
+
 	}
 
 	public void importAnnotation(final String pathwayID, CyNetwork network)
