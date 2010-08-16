@@ -4,6 +4,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import giny.view.NodeView;
 
@@ -14,6 +16,7 @@ import javax.swing.JPopupMenu;
 
 import org.cytoscape.data.reader.kgml.KEGGEntryType;
 
+import cytoscape.CyNode;
 import cytoscape.Cytoscape;
 import cytoscape.actions.LoadNetworkTask;
 import cytoscape.data.CyAttributes;
@@ -26,6 +29,7 @@ import cytoscape.actions.LoadNetworkTask;
  * Add context menu for KEGG pathways
  * 
  * @author kono
+ * @author Kozo.Nishida
  * 
  */
 public class KEGGNodeContextMenuListener implements NodeContextMenuListener {
@@ -37,7 +41,7 @@ public class KEGGNodeContextMenuListener implements NodeContextMenuListener {
 	private static final String REACTION_DBGET_URL = "http://www.genome.jp/dbget-bin/www_bget?";
 	private static final String MAP_DBGET_URL = "http://www.genome.jp/dbget-bin/www_bget?pathway+";
 	
-	private static final String KGML_URL = "ftp://ftp.genome.jp/pub/kegg/xml/kgml/metabolic/organisms/";
+	private static final String KGML_URL = "ftp://ftp.genome.jp/pub/kegg/xml/kgml/metabolic/";
 
 	private CyAttributes nodeAttr = Cytoscape.getNodeAttributes();
 	private final CyNetworkView view;
@@ -47,7 +51,18 @@ public class KEGGNodeContextMenuListener implements NodeContextMenuListener {
 	}
 	
 	private URL convertToFTP(String mapID) throws MalformedURLException {
-		return new URL(KGML_URL + mapID.substring(0, 3) + "/" + mapID + ".xml");
+		Pattern ecPattern = Pattern.compile("ec[0-9]{5}");
+		Matcher ecMatcher = ecPattern.matcher(mapID);
+		Pattern koPattern = Pattern.compile("ko[0-9]{5}");
+		Matcher koMatcher = koPattern.matcher(mapID);
+		Pattern rnPattern = Pattern.compile("rn[0-9]{5}");
+		Matcher rnMatcher = rnPattern.matcher(mapID);
+				
+		if (ecMatcher.find() || koMatcher.find() || rnMatcher.find()){
+			return new URL(KGML_URL + mapID.substring(0, 2) + "/" + mapID + ".xml");
+		} else{
+			return new URL(KGML_URL + "organisms/" + mapID.substring(0, 3) + "/" + mapID + ".xml");	
+		}
 	}
 
 	@Override
@@ -56,6 +71,8 @@ public class KEGGNodeContextMenuListener implements NodeContextMenuListener {
 			return;
 
 		final JMenu keggMenu = new JMenu("KEGG Options");
+		JMenuItem setNnfItem = new JMenuItem();
+		keggMenu.add(setNnfItem);
 
 		final String attrValue = nodeAttr.getStringAttribute(nv.getNode()
 				.getIdentifier(), "KEGG.entry");
@@ -90,27 +107,36 @@ public class KEGGNodeContextMenuListener implements NodeContextMenuListener {
 		} else if (entryType.equals(KEGGEntryType.MAP)) {
 			final String mapID = nodeAttr.getStringAttribute(
 					nv.getNode().getIdentifier(), "KEGG.name").split(":")[1];
+			final CyNode mapNode = Cytoscape.getCyNode(nv.getNode().getIdentifier());
 			URL image = null;
 			try {
 				image = new URL(MAP_URL + mapID + ".png");
-				item.addActionListener(new ActionListener() {
+				setNnfItem.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
-//						cytoscape.util.OpenBrowser.openURL(MAP_DBGET_URL
-//								+ mapID);
 						try {
 							LoadNetworkTask.loadURL(convertToFTP(mapID), true);
+							mapNode.setNestedNetwork(Cytoscape.getCurrentNetworkView().getGraphPerspective());
 						} catch (MalformedURLException e1) {
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
 						}
 					}
 				});
+				
+				item.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						cytoscape.util.OpenBrowser.openURL(MAP_DBGET_URL
+								+ mapID);
+					}
+				});
 			} catch (MalformedURLException e) {
 				e.printStackTrace();
 			}
+			setNnfItem.setText("import maplink pathway: " + mapID + " and set as NNF");
 			item.setIcon(new ImageIcon(image));
-			item.setText("Pathway: " + mapID);
+			item.setText("open pathway: " + mapID + " in Browser");
 		} else if (entryType.equals(KEGGEntryType.GENE)
 				|| entryType.equals(KEGGEntryType.ORTHOLOG)) {
 			try {
