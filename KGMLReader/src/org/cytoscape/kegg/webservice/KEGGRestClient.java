@@ -19,6 +19,7 @@ import cytoscape.data.CyAttributes;
 import cytoscape.view.CyNetworkView;
 import cytoscape.visual.VisualStyle;
 
+
 /**
  * Very simple Client for togoWS Rest service.
  * 
@@ -95,6 +96,7 @@ public class KEGGRestClient {
 						"KEGG.label.first", compoundName);
 				nodeAttr.setAttribute(cyNode.getIdentifier(),
 						"compound.label.width", 10);
+				
 			}
 		}
 

@@ -40,6 +40,9 @@ import cytoscape.visual.calculators.Calculator;
 import cytoscape.visual.mappings.DiscreteMapping;
 import cytoscape.visual.mappings.ObjectMapping;
 import cytoscape.visual.mappings.PassThroughMapping;
+import cytoscape.visual.LabelPosition;
+
+import giny.view.Label;
 
 public class PathwayMapper {
 
@@ -80,6 +83,9 @@ public class PathwayMapper {
 	private static final Color MAP_COLOR = new Color(0x00BFFF);
 
 	private static final Color GLOBAL_DEF_COLOR = new Color(0xAAAAAA);
+	
+	private static final LabelPosition NODE_DEF_LABEL_POSITION = new LabelPosition(Label.SOUTHEAST, Label.NORTHWEST, Label.JUSTIFY_CENTER, 0.0, 0.0);
+	private static final LabelPosition COMPOUND_LABEL_POSITION = new LabelPosition(Label.SOUTHEAST, Label.NORTHWEST, Label.JUSTIFY_CENTER, -30.0, 3.0);
 
 	private static final Font nodeLabelFont = new Font("SansSerif", 7,
 			Font.PLAIN);
@@ -441,7 +447,8 @@ public class PathwayMapper {
 		nac.getDefaultAppearance().set(VisualPropertyType.NODE_FONT_FACE,
 				nodeLabelFont);
 		nac.getDefaultAppearance().set(VisualPropertyType.NODE_FONT_SIZE, 6);
-
+		nac.getDefaultAppearance().set(VisualPropertyType.NODE_LABEL_WIDTH, 15);
+		
 		// Default Edge appr
 		eac.getDefaultAppearance().set(VisualPropertyType.EDGE_TGTARROW_SHAPE,
 				ArrowShape.DELTA);
@@ -562,7 +569,13 @@ public class PathwayMapper {
 			nodeColorMap.putMapValue(KEGGEntryType.COMPOUND.getTag(),
 					COMPOUND_COLOR);
 			nodeColorMap.putMapValue(KEGGEntryType.MAP.getTag(), MAP_COLOR);
+			
+			final DiscreteMapping nodeLabelPositionMap = new DiscreteMapping(NODE_DEF_LABEL_POSITION, KEGG_ENTRY, ObjectMapping.NODE_MAPPING);
+			final Calculator nodeLabelPositionCalc = new BasicCalculator(vsName + "-" + "NodeLabelPositionMapping", nodeLabelPositionMap, VisualPropertyType.NODE_LABEL_POSITION);
+			nodeLabelPositionMap.putMapValue(KEGGEntryType.COMPOUND.getTag(), COMPOUND_LABEL_POSITION);
+			
 			nac.setCalculator(nodeColorCalc);
+			nac.setCalculator(nodeLabelPositionCalc);
 		}
 
 		final DiscreteMapping nodeWidth = new DiscreteMapping(30, "ID",
