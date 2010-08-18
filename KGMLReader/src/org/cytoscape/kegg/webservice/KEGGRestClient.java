@@ -29,7 +29,7 @@ import cytoscape.visual.VisualStyle;
  */
 public class KEGGRestClient {
 
-	private static final String USER_AGENT = "Cytoscape KEGG/togoWS REST Client v0.50 (Apache HttpClient 4.0.1)";
+	private static final String USER_AGENT = "Cytoscape KEGG/togoWS REST Client v0.06 (Apache HttpClient 4.0.1)";
 
 	private static final String KEGG_BASE_URL = "http://togows.dbcls.jp/entry/";
 	private static final String FORMAT_JSON = ".json";
