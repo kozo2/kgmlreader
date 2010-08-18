@@ -7,9 +7,10 @@ import java.util.Map;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.HttpParams;
+import org.apache.http.params.HttpProtocolParams;
 import org.apache.http.util.EntityUtils;
 
 import cytoscape.CyNetwork;
@@ -19,7 +20,6 @@ import cytoscape.data.CyAttributes;
 import cytoscape.view.CyNetworkView;
 import cytoscape.visual.VisualStyle;
 
-
 /**
  * Very simple Client for togoWS Rest service.
  * 
@@ -28,6 +28,9 @@ import cytoscape.visual.VisualStyle;
  * 
  */
 public class KEGGRestClient {
+
+	private static final String USER_AGENT = "Cytoscape KEGG/togoWS REST Client v0.50 (Apache HttpClient 4.0.1)";
+
 	private static final String KEGG_BASE_URL = "http://togows.dbcls.jp/entry/";
 	private static final String FORMAT_JSON = ".json";
 	private final CyAttributes attr;
@@ -96,7 +99,7 @@ public class KEGGRestClient {
 						"KEGG.label.first", compoundName);
 				nodeAttr.setAttribute(cyNode.getIdentifier(),
 						"compound.label.width", 10);
-				
+
 			}
 		}
 
@@ -164,22 +167,23 @@ public class KEGGRestClient {
 		final HttpGet httpget = new HttpGet(KEGG_BASE_URL + type.getType()
 				+ "/" + id);
 
-		final DefaultHttpClient httpclient = new DefaultHttpClient();
-		final HttpResponse response = httpclient.execute(httpget);
-		final HttpEntity entity = response.getEntity();
-
-		if (entity != null)
-			return EntityUtils.toString(entity);
-		else
-			return null;
+		return fetchData(httpget);
 	}
 
+	
 	private String getEntryField(final DatabaseType dbType, final String id,
 			final FieldType fieldType) throws IOException {
 		final HttpGet httpget = new HttpGet(KEGG_BASE_URL + dbType.getType()
 				+ "/" + id + "/" + fieldType.getType());
+		
+		return fetchData(httpget);
+	}
 
+	
+	private String fetchData(HttpGet httpget) throws IOException {
 		final DefaultHttpClient httpclient = new DefaultHttpClient();
+		final HttpParams param = httpclient.getParams();
+		HttpProtocolParams.setUserAgent(param, USER_AGENT);
 		final HttpResponse response = httpclient.execute(httpget);
 		final HttpEntity entity = response.getEntity();
 
@@ -188,4 +192,5 @@ public class KEGGRestClient {
 		} else
 			return null;
 	}
+
 }

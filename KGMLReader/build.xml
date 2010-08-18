@@ -9,14 +9,14 @@
 	<property name="plugin.name" value="KGMLReader" />
 	
 	<!-- Version of plugin -->
-	<property name="version" value="0.01" />
+	<property name="version" value="0.11" />
 
 	<!-- The directory containing source code -->
 	<property name="src.dir" value="src" />
 
 	<!--  The directory containing library jar files -->
 	<property name="cyto.dir" value="../cytoscape" />
-        <property name="cyto.lib.dir" value="${cyto.dir}/legacy/lib" />
+        <property name="cyto.lib.dir" value="${cyto.dir}/lib" />
 	<property name="lib.dir" value="lib" />
 	<property name="resources.dir" value="resources" />
 

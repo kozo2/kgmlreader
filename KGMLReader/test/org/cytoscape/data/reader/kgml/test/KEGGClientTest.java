@@ -26,6 +26,11 @@ public class KEGGClientTest {
 	@After
 	public void tearDown() throws Exception {
 	}
+	
+	@Test
+	public void testUserAgent() {
+		
+	}
 
 	@Test
 	public void testClient() throws Exception {
