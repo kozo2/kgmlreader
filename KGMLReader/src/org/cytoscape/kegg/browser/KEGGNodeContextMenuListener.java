@@ -64,6 +64,12 @@ public class KEGGNodeContextMenuListener implements NodeContextMenuListener {
 			return new URL(KGML_URL + "organisms/" + mapID.substring(0, 3) + "/" + mapID + ".xml");	
 		}
 	}
+	
+	private void expandNnfPathway(CyNode mapNode){
+		for (Integer nodeIndex : mapNode.getNestedNetwork().getNodeIndicesArray()) {
+			mapNode.getNestedNetwork().getNode(nodeIndex);
+		}
+	}
 
 	@Override
 	public void addNodeContextMenuItems(NodeView nv, JPopupMenu menu) {
@@ -72,7 +78,9 @@ public class KEGGNodeContextMenuListener implements NodeContextMenuListener {
 
 		final JMenu keggMenu = new JMenu("KEGG Options");
 		JMenuItem setNnfItem = new JMenuItem();
+		JMenuItem expandNnfItem = new JMenuItem();
 		keggMenu.add(setNnfItem);
+		keggMenu.add(expandNnfItem);
 
 		final String attrValue = nodeAttr.getStringAttribute(nv.getNode()
 				.getIdentifier(), "KEGG.entry");
@@ -124,6 +132,21 @@ public class KEGGNodeContextMenuListener implements NodeContextMenuListener {
 					}
 				});
 				
+				expandNnfItem.addActionListener(new ActionListener() {
+					
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						try {
+							expandNnfPathway(mapNode);
+
+						} catch (Exception e2) {
+							// TODO: handle exception
+						}
+
+						
+					}
+				});
+				
 				item.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
@@ -135,8 +158,11 @@ public class KEGGNodeContextMenuListener implements NodeContextMenuListener {
 				e.printStackTrace();
 			}
 			setNnfItem.setText("import maplink pathway: " + mapID + " and set as NNF");
+			expandNnfItem.setText("expand maplink pathway: " + mapID + " here");
+	
 			item.setIcon(new ImageIcon(image));
 			item.setText("open pathway: " + mapID + " in Browser");
+			
 		} else if (entryType.equals(KEGGEntryType.GENE)
 				|| entryType.equals(KEGGEntryType.ORTHOLOG)) {
 			try {
