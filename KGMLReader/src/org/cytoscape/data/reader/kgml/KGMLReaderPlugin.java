@@ -45,7 +45,7 @@ public class KGMLReaderPlugin extends CytoscapePlugin {
 	}
 
 	private void addMenu() {
-		final JMenu menu = new JMenu("KEGG Browser");
+		final JMenu menu = new JMenu("KGML Reader");
 		
 		final JMenu optionMenu = new JMenu("Options");
 
