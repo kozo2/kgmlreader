@@ -1,5 +1,6 @@
 package org.cytoscape.data.reader.kgml;
 
+import giny.view.Label;
 import giny.view.NodeView;
 
 import java.awt.Color;
@@ -30,6 +31,7 @@ import cytoscape.view.CyNetworkView;
 import cytoscape.visual.ArrowShape;
 import cytoscape.visual.EdgeAppearanceCalculator;
 import cytoscape.visual.GlobalAppearanceCalculator;
+import cytoscape.visual.LabelPosition;
 import cytoscape.visual.LineStyle;
 import cytoscape.visual.NodeAppearanceCalculator;
 import cytoscape.visual.NodeShape;
@@ -40,9 +42,6 @@ import cytoscape.visual.calculators.Calculator;
 import cytoscape.visual.mappings.DiscreteMapping;
 import cytoscape.visual.mappings.ObjectMapping;
 import cytoscape.visual.mappings.PassThroughMapping;
-import cytoscape.visual.LabelPosition;
-
-import giny.view.Label;
 
 public class PathwayMapper {
 

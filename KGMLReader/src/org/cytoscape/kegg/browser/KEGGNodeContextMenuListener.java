@@ -1,13 +1,13 @@
 package org.cytoscape.kegg.browser;
 
+import giny.view.NodeView;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import giny.view.NodeView;
 
 import javax.swing.ImageIcon;
 import javax.swing.JMenu;
@@ -21,9 +21,7 @@ import cytoscape.Cytoscape;
 import cytoscape.actions.LoadNetworkTask;
 import cytoscape.data.CyAttributes;
 import cytoscape.view.CyNetworkView;
-
 import ding.view.NodeContextMenuListener;
-import cytoscape.actions.LoadNetworkTask;
 
 /**
  * Add context menu for KEGG pathways
@@ -45,9 +43,14 @@ public class KEGGNodeContextMenuListener implements NodeContextMenuListener {
 
 	private CyAttributes nodeAttr = Cytoscape.getNodeAttributes();
 	private final CyNetworkView view;
+	
+	private final NestedNodeExpander expander;
+	
+	
 
 	public KEGGNodeContextMenuListener(CyNetworkView view) {
 		this.view = view;
+		this.expander = new NestedNodeExpander(view);
 	}
 	
 	private URL convertToFTP(String mapID) throws MalformedURLException {
@@ -137,7 +140,7 @@ public class KEGGNodeContextMenuListener implements NodeContextMenuListener {
 					@Override
 					public void actionPerformed(ActionEvent e) {
 						try {
-							expandNnfPathway(mapNode);
+							expander.expandNestedNode(mapNode);
 
 						} catch (Exception e2) {
 							// TODO: handle exception
