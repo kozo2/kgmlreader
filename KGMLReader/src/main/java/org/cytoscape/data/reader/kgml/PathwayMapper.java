@@ -1,7 +1,10 @@
 package org.cytoscape.data.reader.kgml;
 
+import giny.view.Justification;
 import giny.view.Label;
 import giny.view.NodeView;
+import giny.view.ObjectPosition;
+import giny.view.Position;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -42,6 +45,7 @@ import cytoscape.visual.calculators.Calculator;
 import cytoscape.visual.mappings.DiscreteMapping;
 import cytoscape.visual.mappings.ObjectMapping;
 import cytoscape.visual.mappings.PassThroughMapping;
+import ding.view.ObjectPositionImpl;
 
 public class PathwayMapper {
 
@@ -83,8 +87,8 @@ public class PathwayMapper {
 
 	private static final Color GLOBAL_DEF_COLOR = new Color(0xAAAAAA);
 	
-	private static final LabelPosition NODE_DEF_LABEL_POSITION = new LabelPosition(Label.SOUTHEAST, Label.NORTHWEST, Label.JUSTIFY_CENTER, 0.0, 0.0);
-	private static final LabelPosition COMPOUND_LABEL_POSITION = new LabelPosition(Label.SOUTHEAST, Label.NORTHWEST, Label.JUSTIFY_CENTER, -30.0, 3.0);
+	private static final ObjectPosition NODE_DEF_LABEL_POSITION = new ObjectPositionImpl(Position.SOUTH_EAST, Position.NORTH_WEST, Justification.JUSTIFY_CENTER, 0.0, 0.0);
+	private static final ObjectPosition COMPOUND_LABEL_POSITION = new ObjectPositionImpl(Position.SOUTH_EAST, Position.NORTH_WEST, Justification.JUSTIFY_CENTER, -30.0, 3.0);
 
 	private static final Font nodeLabelFont = new Font("SansSerif", 7,
 			Font.PLAIN);
