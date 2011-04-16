@@ -26,7 +26,8 @@ public class PathwayDragAndDropManager {
 	}
 
 	private static final String KEGG_FTP_BASE_URL = "ftp://ftp.genome.jp/pub/kegg/xml/kgml/metabolic/";
-	private static final String KEGG_PATHWAY_IMAGE_BASE_URL = "http://www.genome.jp/kegg/pathway/";
+	private static final String KEGG_PATHWAY_IMAGE_BASE_URL = "http://www.kegg.com/kegg/pathway/";
+        private static final String GENOMENET_PATHWAY_IMAGE_BASE_URL = "http://www.genome.jp/kegg/pathway/";
 
 	private KEGGDropTarget target = null;
 
@@ -130,6 +131,8 @@ public class PathwayDragAndDropManager {
 
 			String ftp = original.replace(KEGG_PATHWAY_IMAGE_BASE_URL,
 					KEGG_FTP_BASE_URL);
+                        ftp = ftp.replace(GENOMENET_PATHWAY_IMAGE_BASE_URL,
+                                        KEGG_FTP_BASE_URL);
 			ftp = ftp.replace("png", "xml");
 
 			final String last = parts[parts.length - 1];
