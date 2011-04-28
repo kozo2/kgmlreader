@@ -4,7 +4,7 @@
 	<groupId>org.cytoscape</groupId>
 	<artifactId>kgmlreader</artifactId>
 	<packaging>jar</packaging>
-	<version>0.09-SNAPSHOT</version>
+	<version>0.10-SNAPSHOT</version>
 	<name>KGML Reader</name>
 
 	<build>
@@ -18,17 +18,10 @@
 						<descriptorRef>jar-with-dependencies</descriptorRef>
 					</descriptorRefs>
 					<archive>
-						<manifestSections>
-
-							<manifestSection>
-								<name>basic</name>
-								<manifestEntries>
-									<Cytoscape-Plugin>org.cytoscape.data.reader.kgml.KGMLReaderPlugin</Cytoscape-Plugin>
-								</manifestEntries>
-							</manifestSection>
-						</manifestSections>
+						<manifestEntries>
+							<Cytoscape-Plugin>org.cytoscape.data.reader.kgml.KGMLReaderPlugin</Cytoscape-Plugin>
+						</manifestEntries>
 					</archive>
-
 				</configuration>
 				<executions>
 					<execution>
