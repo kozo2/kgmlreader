@@ -1,6 +1,7 @@
 package org.cytoscape.kegg.webservice;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +13,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
 import org.apache.http.util.EntityUtils;
+import org.cytoscape.equations.builtins.Left;
 
 import cytoscape.CyNetwork;
 import cytoscape.CyNode;
@@ -33,11 +35,12 @@ public class KEGGRestClient {
 
 	private static final String KEGG_BASE_URL = "http://togows.dbcls.jp/entry/";
 	private static final String FORMAT_JSON = ".json";
+	
 	private final CyAttributes attr;
 	private final CyAttributes nodeAttr;
 
 	private enum DatabaseType {
-		COMPOUND("compound"), PATHWAY("kegg-pathway"), MODULE("kegg-module");
+		COMPOUND("compound"), PATHWAY("kegg-pathway"), MODULE("kegg-module"), REACTION("reaction");
 
 		private final String type;
 
@@ -51,9 +54,8 @@ public class KEGGRestClient {
 	}
 
 	private enum FieldType {
-		DISEASE("diseases"), DBLINKS("dblinks"), REL_PATHWAY("relpathways"), MODULE(
-				"modules"), MODULE_JSON("modules.json"), NAME("name"), REACTION(
-				"reactions");
+		DISEASE("diseases"), DBLINKS("dblinks"), REL_PATHWAY("relpathways"), MODULE("modules"), MODULE_JSON(
+				"modules.json"), NAME("name"), REACTION("reactions"), EQUATION("equation");
 
 		private final String type;
 
@@ -81,105 +83,102 @@ public class KEGGRestClient {
 		this.nodeAttr = Cytoscape.getNodeAttributes();
 	}
 
-	public void importCompoundName(final String pathwayName, CyNetwork network)
-			throws IOException {
+	public void importCompoundName(final String pathwayName, CyNetwork network) throws IOException {
 
 		final List<CyNode> cyNodes = Cytoscape.getCyNodesList();
-		final String vsName = "KEGG: " + network.getTitle() + " ("
-				+ pathwayName + ")";
+		final String vsName = "KEGG: " + network.getTitle() + " (" + pathwayName + ")";
 
 		for (CyNode cyNode : cyNodes) {
-			if (nodeAttr.getStringAttribute(cyNode.getIdentifier(),
-					"KEGG.entry").equals("compound")) {
-				final String compoundName = getEntryField(
-						DatabaseType.COMPOUND, nodeAttr.getStringAttribute(
-								cyNode.getIdentifier(), "KEGG.label"),
-						FieldType.NAME);
-				nodeAttr.setAttribute(cyNode.getIdentifier(),
-						"KEGG.label.first", compoundName);
-				nodeAttr.setAttribute(cyNode.getIdentifier(),
-						"compound.label.width", 10);
-
+			if (nodeAttr.getStringAttribute(cyNode.getIdentifier(), "KEGG.entry").equals("compound")) {
+				final String compoundName = getEntryField(DatabaseType.COMPOUND,
+						nodeAttr.getStringAttribute(cyNode.getIdentifier(), "KEGG.label"), FieldType.NAME);
+				nodeAttr.setAttribute(cyNode.getIdentifier(), "KEGG.label.first", compoundName);
+				nodeAttr.setAttribute(cyNode.getIdentifier(), "compound.label.width", 10);
 			}
 		}
 
-		final VisualStyle targetStyle = Cytoscape.getVisualMappingManager()
-				.getCalculatorCatalog().getVisualStyle(vsName);
+		final VisualStyle targetStyle = Cytoscape.getVisualMappingManager().getCalculatorCatalog()
+				.getVisualStyle(vsName);
 		Cytoscape.getVisualMappingManager().setVisualStyle(targetStyle);
-		final CyNetworkView view = Cytoscape.getNetworkView(network
-				.getIdentifier());
+		final CyNetworkView view = Cytoscape.getNetworkView(network.getIdentifier());
 		Cytoscape.getVisualMappingManager().setNetworkView(view);
 		view.redrawGraph(false, true);
 
 	}
 
-	public void importAnnotation(final String pathwayID, CyNetwork network)
-			throws IOException {
+	public void importAnnotation(final String pathwayID, CyNetwork network) throws IOException {
 
 		final String result = getEntries(DatabaseType.PATHWAY, pathwayID);
-		final String moduleEntryField = getEntryField(DatabaseType.PATHWAY,
-				pathwayID, FieldType.MODULE);
-		final String relpathwayEntryField = getEntryField(DatabaseType.PATHWAY,
-				pathwayID, FieldType.REL_PATHWAY);
-		final String dblinkEntryField = getEntryField(DatabaseType.PATHWAY,
-				pathwayID, FieldType.DBLINKS);
-		final String diseaseEntryField = getEntryField(DatabaseType.PATHWAY,
-				pathwayID, FieldType.DISEASE);
+		System.out.println("# pw result = " + result);
+		
+		final String moduleEntryField = getEntryField(DatabaseType.PATHWAY, pathwayID, FieldType.MODULE);
+		final String relpathwayEntryField = getEntryField(DatabaseType.PATHWAY, pathwayID, FieldType.REL_PATHWAY);
+		final String dblinkEntryField = getEntryField(DatabaseType.PATHWAY, pathwayID, FieldType.DBLINKS);
+		final String diseaseEntryField = getEntryField(DatabaseType.PATHWAY, pathwayID, FieldType.DISEASE);
 
-		if (moduleEntryField != null) {
+		if (moduleEntryField != null)
 			parser.mapModule(moduleEntryField, network);
 
-		}
-
-		if (relpathwayEntryField != null) {
+		if (relpathwayEntryField != null)
 			parser.mapRelpathway(relpathwayEntryField, network);
-		}
 
-		if (dblinkEntryField != null) {
+		if (dblinkEntryField != null)
 			parser.mapDblink(dblinkEntryField, network);
-		}
 
-		if (diseaseEntryField != null) {
+		if (diseaseEntryField != null)
 			parser.mapDisease(diseaseEntryField, network);
-		}
 
-		final List<String> moduleIDs = attr.getListAttribute(
-				network.getIdentifier(), "KEGG.moduleID");
-
+		final List<String> moduleIDs = attr.getListAttribute(network.getIdentifier(), "KEGG.moduleID");
 		final Map<String, List<String>> module2reactionMap = new HashMap<String, List<String>>();
 
 		for (String moduleID : moduleIDs) {
-			String moduleReactions = getEntryField(DatabaseType.MODULE,
-					moduleID, FieldType.REACTION);
-			module2reactionMap.put(moduleID,
-					parser.getReactionIDs(moduleReactions));
-
+			String moduleReactions = getEntryField(DatabaseType.MODULE, moduleID, FieldType.REACTION);
+			module2reactionMap.put(moduleID, parser.getReactionIDs(moduleReactions));
 		}
 
-		if (module2reactionMap != null) {
+		if (module2reactionMap != null)
 			parser.mapModuleReaction(module2reactionMap, network);
-		}
-
 	}
-
-	private String getEntries(final DatabaseType type, final String id)
-			throws IOException {
-		final HttpGet httpget = new HttpGet(KEGG_BASE_URL + type.getType()
-				+ "/" + id);
-
-		return fetchData(httpget);
-	}
-
 	
-	private String getEntryField(final DatabaseType dbType, final String id,
-			final FieldType fieldType) throws IOException {
-		final HttpGet httpget = new HttpGet(KEGG_BASE_URL + dbType.getType()
-				+ "/" + id + "/" + fieldType.getType());
+	public Map<List<String>, List<String>> getReactions(String reactionID) throws IOException {
+		final String response = getEntryField(DatabaseType.REACTION, reactionID, FieldType.EQUATION);
+		final Map<List<String>, List<String>> resultMap = new HashMap<List<String>, List<String>>();
 		
+		final String[] parts = response.split("<=>");
+		
+		if (parts.length == 2) {
+			System.out.print("Left = " + parts[0]);
+			System.out.println("  Right = " + parts[1]);
+			final String[] left = parts[0].split("\\+");
+			final String[] right = parts[1].split("\\+");
+			final List<String> keys = new ArrayList<String>();
+			final List<String> vals = new ArrayList<String>();
+			for(String val: left)
+				keys.add(val.trim());
+			for(String val: right)
+				vals.add(val.trim());
+			resultMap.put(keys, vals);
+		}
+		return resultMap;
+	}
+
+	private String getEntries(final DatabaseType type, final String id) throws IOException {
+		final HttpGet httpget = new HttpGet(KEGG_BASE_URL + type.getType() + "/" + id.trim());
+
 		return fetchData(httpget);
 	}
 
-	
+	private String getEntryField(final DatabaseType dbType, final String id, final FieldType fieldType)
+			throws IOException {
+
+		final String uriString = KEGG_BASE_URL + dbType.getType() + "/" + id.trim() + "/" + fieldType.getType();
+		final HttpGet httpget = new HttpGet(uriString);
+
+		System.out.println("* Entry URL = " + uriString);
+
+		return fetchData(httpget);
+	}
+
 	private String fetchData(HttpGet httpget) throws IOException {
 		final DefaultHttpClient httpclient = new DefaultHttpClient();
 		final HttpParams param = httpclient.getParams();
@@ -187,9 +186,9 @@ public class KEGGRestClient {
 		final HttpResponse response = httpclient.execute(httpget);
 		final HttpEntity entity = response.getEntity();
 
-		if (entity != null) {
+		if (entity != null)
 			return EntityUtils.toString(entity);
-		} else
+		else
 			return null;
 	}
 

@@ -4,6 +4,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.util.List;
+import java.util.Map;
+
+import javax.xml.ws.Response;
 
 import org.cytoscape.kegg.webservice.KEGGRestClient;
 import org.junit.After;
@@ -40,11 +43,15 @@ public class KEGGClientTest {
 		
 		List<String> moduleIDs = attr.getListAttribute(net.getIdentifier(), "KEGG.moduleID");
 		assertNotNull(moduleIDs);
-		assertEquals(8, moduleIDs.size());
+		assertEquals(4, moduleIDs.size());
 		
 		List<String> relpathwayIDs = attr.getListAttribute(net.getIdentifier(), "KEGG.relpathwayID");
 		assertNotNull(relpathwayIDs);
-		assertEquals(6, relpathwayIDs.size());
+		assertEquals(5, relpathwayIDs.size());
+		
+		final Map<List<String>, List<String>> response = KEGGRestClient.getCleint().getReactions("R08549");
+		assertEquals(3, response.keySet().iterator().next().size());
+		assertEquals(4, response.values().iterator().next().size());
 	
 //		String fullName = attr.getStringAttribute(net.getIdentifier(), "KEGG.fullName");
 //		assertNotNull(fullName);
