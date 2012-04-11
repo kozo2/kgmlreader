@@ -4,7 +4,7 @@
 	<groupId>org.cytoscape</groupId>
 	<artifactId>kgmlreader</artifactId>
 	<packaging>jar</packaging>
-	<version>0.11-SNAPSHOT</version>
+	<version>0.15-SNAPSHOT</version>
 	<name>KGML Reader</name>
 
 	<build>
@@ -37,7 +37,7 @@
 			<plugin>
 				<groupId>org.jvnet.jaxb2.maven2</groupId>
 				<artifactId>maven-jaxb2-plugin</artifactId>
-				<version>0.7.5</version>
+				<version>0.8.1</version>
 				<executions>
 					<execution>
 						<goals>
@@ -132,7 +132,5 @@
 			<version>2.8.2</version>
 			<scope>provided</scope>
 		</dependency>
-		
 	</dependencies>
-
 </project>
